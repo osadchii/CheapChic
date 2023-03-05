@@ -1,15 +1,16 @@
+using CheapChic.Infrastructure.Constants;
 using Microsoft.AspNetCore.Mvc;
+using Telegram.Bot.Types;
 
 namespace CheapChic.Api.Controllers;
 
-[Route("telegram")]
+[Route($"{ControllerName.Telegram}/{{token}}")]
 public class TelegramController : ApiController
 {
-    // TODO: Remove it
-    [HttpGet]
-    public async Task<IActionResult> FirstAction()
+    [HttpPost]
+    public async Task<IActionResult> Update([FromRoute] string token, [FromBody] Update update)
     {
         await Task.Delay(1);
-        return Ok("First action");
+        return Ok();
     }
 }
