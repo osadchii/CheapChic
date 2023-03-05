@@ -2,13 +2,20 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{4F1A45FF-78AC-48A2-866C-1CCE8196533D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheapChic.Api", "Source\CheapChic.Api\CheapChic.Api.csproj", "{1E2A9B6F-9EBC-40D2-B2BA-1A42F048B91E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{1E2A9B6F-9EBC-40D2-B2BA-1A42F048B91E} = {4F1A45FF-78AC-48A2-866C-1CCE8196533D}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1E2A9B6F-9EBC-40D2-B2BA-1A42F048B91E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E2A9B6F-9EBC-40D2-B2BA-1A42F048B91E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E2A9B6F-9EBC-40D2-B2BA-1A42F048B91E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E2A9B6F-9EBC-40D2-B2BA-1A42F048B91E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
