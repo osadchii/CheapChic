@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="..\..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.local.json">
+            <DependentUpon>appsettings.json</DependentUpon>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <Target Name="CreateLocalFiles" BeforeTargets="Build" Condition="'$(ConfigurationName)|$(BuildingInsideVisualStudio)'=='Debug|True' or '$(ConfigurationName)|$(BuildingByReSharper)'=='Debug|True'">
+        <Copy SourceFiles="appsettings.json" DestinationFiles="appsettings.local.json" Condition="!Exists('appsettings.local.json')"/>
+    </Target>
+
+</Project>
