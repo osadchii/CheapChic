@@ -1,3 +1,4 @@
+using CheapChic.Infrastructure.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -14,5 +15,7 @@ public static class ServiceConfigurator
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
+
+        services.AddInfrastructure(configuration);
     }
 }
