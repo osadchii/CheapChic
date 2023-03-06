@@ -1,6 +1,9 @@
 using CheapChic.Infrastructure.Configuration.Models;
 using CheapChic.Infrastructure.Handlers.Telegram.Commands;
 using CheapChic.Infrastructure.HostedServices;
+using CheapChic.Infrastructure.UpdateHandlers.CallbackQuery;
+using CheapChic.Infrastructure.UpdateHandlers.Message;
+using CheapChic.Infrastructure.UpdateHandlers.MyChatMember;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,5 +26,9 @@ public static class ServiceRegistry
         services.AddHttpClient();
 
         services.AddHostedService<WebhookHostedService>();
+
+        services.AddTransient<ICallbackQueryHandler, CallbackQueryHandler>();
+        services.AddTransient<IMessageHandler, MessageHandler>();
+        services.AddTransient<IMyChatMemberHandler, MyChatMemberHandler>();
     }
 }
