@@ -29,6 +29,10 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.3"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <Target Name="CreateLocalFiles" BeforeTargets="Build" Condition="'$(ConfigurationName)|$(BuildingInsideVisualStudio)'=='Debug|True' or '$(ConfigurationName)|$(BuildingByReSharper)'=='Debug|True'">
