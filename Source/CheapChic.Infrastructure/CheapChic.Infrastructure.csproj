@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\CheapChic.Data\CheapChic.Data.csproj"/>
         <ProjectReference Include="..\CheapChic.Telegram\CheapChic.Telegram.csproj"/>
     </ItemGroup>
 

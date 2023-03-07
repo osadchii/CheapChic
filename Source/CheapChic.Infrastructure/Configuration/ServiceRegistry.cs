@@ -1,9 +1,11 @@
+using CheapChic.Data;
 using CheapChic.Infrastructure.Configuration.Models;
 using CheapChic.Infrastructure.Handlers.Telegram.Commands;
 using CheapChic.Infrastructure.HostedServices;
 using CheapChic.Infrastructure.UpdateHandlers.CallbackQuery;
 using CheapChic.Infrastructure.UpdateHandlers.Message;
 using CheapChic.Infrastructure.UpdateHandlers.MyChatMember;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +15,13 @@ public static class ServiceRegistry
 {
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddDbContext<CheapChicContext>(options =>
+        {
+            var connectionString = configuration.GetConnectionString("Default");
+            options.UseNpgsql(connectionString,
+                builder => { builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery); });
+        });
+
         services.AddMediatR(mediatrConfiguration =>
         {
             mediatrConfiguration.RegisterServicesFromAssemblyContaining<HandleUpdate.Command>();
