@@ -1,4 +1,5 @@
 using CheapChic.Data;
+using CheapChic.Infrastructure.Bot;
 using CheapChic.Infrastructure.Configuration.Models;
 using CheapChic.Infrastructure.Handlers.Telegram.Commands;
 using CheapChic.Infrastructure.HostedServices;
@@ -39,5 +40,7 @@ public static class ServiceRegistry
         services.AddTransient<ICallbackQueryHandler, CallbackQueryHandler>();
         services.AddTransient<IMessageHandler, MessageHandler>();
         services.AddTransient<IMyChatMemberHandler, MyChatMemberHandler>();
+
+        services.AddTransient<ITelegramBot, TelegramBot>();
     }
 }

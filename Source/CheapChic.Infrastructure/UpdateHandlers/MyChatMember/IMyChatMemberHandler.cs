@@ -4,5 +4,6 @@ namespace CheapChic.Infrastructure.UpdateHandlers.MyChatMember;
 
 public interface IMyChatMemberHandler
 {
-    Task HandleMyChatMember(string token, ChatMemberUpdated myChatMember);
+    Task HandleMyChatMember(string token, ChatMemberUpdated myChatMember,
+        CancellationToken cancellationToken = default);
 }
