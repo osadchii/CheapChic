@@ -1,6 +1,7 @@
 using CheapChic.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CheapChic.Data;
 
@@ -14,6 +15,8 @@ public sealed class CheapChicContext : DbContext
 
     public DbSet<TelegramBotEntity> TelegramBots { get; set; }
     public DbSet<TelegramUserEntity> TelegramUsers { get; set; }
+    public DbSet<TelegramChannelEntity> TelegramChannels { get; set; }
+    public DbSet<TelegramMessageEntity> TelegramMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,6 +32,32 @@ public sealed class CheapChicContext : DbContext
                 .IsUnique();
 
             entity.HasIndex(p => p.OwnerId);
+        });
+
+        modelBuilder.Entity<TelegramChannelEntity>(entity =>
+        {
+            entity.HasIndex(p => p.ChatId)
+                .IsUnique();
+            
+            entity.HasIndex(p => p.OwnerId);
+        });
+
+        modelBuilder.Entity<TelegramMessageEntity>(entity =>
+        {
+            entity.HasIndex(p => new
+                {
+                    p.UserId, 
+                    p.ChannelId, 
+                    p.MessageId
+                })
+                .IsUnique();
+
+            entity.HasIndex(p => p.ChannelId);
+            entity.HasIndex(p => p.UserId);
+            entity.HasIndex(p => p.TelegramBotId);
+
+            entity.Property(p => p.Type)
+                .HasConversion(new EnumToStringConverter<TelegramMessageEntity.TelegramMessageType>());
         });
 
         base.OnModelCreating(modelBuilder);
