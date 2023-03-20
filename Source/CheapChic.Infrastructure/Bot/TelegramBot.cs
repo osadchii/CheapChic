@@ -1,5 +1,6 @@
 using CheapChic.Data;
 using CheapChic.Data.Entities;
+using CheapChic.Infrastructure.Bot.Models;
 using CheapChic.Infrastructure.Bot.Requests;
 using CheapChic.Infrastructure.Configuration.Models;
 using CheapChic.Infrastructure.Constants;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CheapChic.Infrastructure.Bot;
 
@@ -18,7 +20,8 @@ public class TelegramBot : ITelegramBot
     private readonly HttpClient _httpClient;
     private readonly CheapChicContext _context;
 
-    public TelegramBot(HttpClient httpClient, IOptions<ApplicationOptions> applicationOptions, CheapChicContext context, IOptions<ManagementBotOptions> managementBotOptions)
+    public TelegramBot(HttpClient httpClient, IOptions<ApplicationOptions> applicationOptions, CheapChicContext context,
+        IOptions<ManagementBotOptions> managementBotOptions)
     {
         _httpClient = httpClient;
         _applicationOptions = applicationOptions;
@@ -55,7 +58,8 @@ public class TelegramBot : ITelegramBot
         }
     }
 
-    public async Task<TelegramMessageEntity> SendText(string token, SendTextMessageRequest request, CancellationToken cancellationToken = default)
+    public async Task<TelegramMessageEntity> SendText(string token, SendTextMessageRequest request,
+        CancellationToken cancellationToken = default)
     {
         var chatId = request.ChatId;
         var text = request.Text;
@@ -65,7 +69,8 @@ public class TelegramBot : ITelegramBot
         var botId = await GetTelegramBotId(token, cancellationToken);
 
         var client = GetClient(token);
-        var message = await client.SendTextMessageAsync(chatId, text, ParseMode.Html, cancellationToken: cancellationToken);
+        var message =
+            await client.SendTextMessageAsync(chatId, text, ParseMode.Html, cancellationToken: cancellationToken);
 
         var telegramMessage = new TelegramMessageEntity
         {
@@ -82,11 +87,55 @@ public class TelegramBot : ITelegramBot
 
         return telegramMessage;
     }
-    
+
+    public async Task<TelegramMessageEntity> SendReplyKeyboard(string token, SendReplyKeyboardRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var chatId = request.ChatId;
+        var text = request.Text;
+        var keyboard = request.Keyboard;
+
+        var replyKeyboard = new ReplyKeyboardMarkup(keyboard.GetButtons())
+        {
+            Selective = false,
+            ResizeKeyboard = true,
+            InputFieldPlaceholder = text,
+            OneTimeKeyboard = true
+        };
+
+        var userId = await GetUserId(chatId, cancellationToken);
+
+        if (!userId.HasValue)
+        {
+            var exceptionMessage = ExceptionMessage.UserNotFound(chatId);
+            throw new Exception(exceptionMessage);
+        }
+
+        var botId = await GetTelegramBotId(token, cancellationToken);
+
+        var client = GetClient(token);
+        var message = await client.SendTextMessageAsync(chatId, text, ParseMode.Html, replyMarkup: replyKeyboard,
+            cancellationToken: cancellationToken);
+
+        var telegramMessage = new TelegramMessageEntity
+        {
+            MessageId = message.MessageId,
+            Type = TelegramMessageEntity.TelegramMessageType.ReplyKeyboard,
+            Message = request.ToJson(),
+            UserId = userId,
+            TelegramBotId = botId,
+            ChannelId = null
+        };
+
+        await _context.AddAsync(telegramMessage, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return telegramMessage;
+    }
+
     private async Task<(Guid? UserId, Guid? ChannelId)> GetUserChannelIds(long chatId,
         CancellationToken cancellationToken = default)
     {
-        
         var userId = await GetUserId(chatId, cancellationToken);
         var channelId = await GetChannelId(chatId, cancellationToken);
 
