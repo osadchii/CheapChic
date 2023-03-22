@@ -3,9 +3,9 @@ using CheapChic.Data.Constants;
 
 namespace CheapChic.Data.Attributes;
 
-public class ChapChicTableAttribute : TableAttribute
+public class CheapChicTableAttribute : TableAttribute
 {
-    public ChapChicTableAttribute(string name) : base(name)
+    public CheapChicTableAttribute(string name) : base(name)
     {
         Schema = DatabaseConstant.DefaultSchema;
     }

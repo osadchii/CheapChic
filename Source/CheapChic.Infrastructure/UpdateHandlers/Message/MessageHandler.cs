@@ -1,9 +1,7 @@
 using CheapChic.Data;
 using CheapChic.Data.Entities;
 using CheapChic.Infrastructure.Bot;
-using CheapChic.Infrastructure.Bot.Models;
-using CheapChic.Infrastructure.Bot.Requests;
-using CheapChic.Infrastructure.UpdateHandlers.Message.Text;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types.Enums;
 
@@ -11,13 +9,11 @@ namespace CheapChic.Infrastructure.UpdateHandlers.Message;
 
 public class MessageHandler : IMessageHandler
 {
-    private readonly ITelegramBot _telegramBot;
     private readonly CheapChicContext _context;
     private readonly ITextMessageHandler _textMessageHandler;
 
-    public MessageHandler(ITelegramBot telegramBot, CheapChicContext context, ITextMessageHandler textMessageHandler)
+    public MessageHandler(CheapChicContext context, ITextMessageHandler textMessageHandler)
     {
-        _telegramBot = telegramBot;
         _context = context;
         _textMessageHandler = textMessageHandler;
     }

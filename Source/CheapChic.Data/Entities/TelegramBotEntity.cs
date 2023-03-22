@@ -6,7 +6,7 @@ using CheapChic.Data.Constants;
 
 namespace CheapChic.Data.Entities;
 
-[ChapChicTable(DatabaseConstant.TelegramBotTable)]
+[CheapChicTable(DatabaseConstant.TelegramBotTable)]
 public class TelegramBotEntity : BaseEntity
 {
     [Required]
@@ -20,4 +20,8 @@ public class TelegramBotEntity : BaseEntity
     public Guid OwnerId { get; set; }
 
     public TelegramUserEntity Owner { get; set; }
+
+    [Required]
+    [MaxLength(DatabaseLimit.TelegramBotName)]
+    public string Name { get; set; }
 }

@@ -7,5 +7,10 @@ public abstract class SendRequest
         ChatId = chatId;
     }
 
+    protected SendRequest()
+    {
+        
+    }
+
     public long ChatId { get; }
 }

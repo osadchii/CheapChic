@@ -5,7 +5,7 @@ using CheapChic.Data.Constants;
 
 namespace CheapChic.Data.Entities;
 
-[ChapChicTable(DatabaseConstant.TelegramChannelTable)]
+[CheapChicTable(DatabaseConstant.TelegramChannelTable)]
 public class TelegramChannelEntity : BaseEntity
 {
     [Required]

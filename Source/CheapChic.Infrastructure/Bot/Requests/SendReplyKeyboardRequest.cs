@@ -7,6 +7,11 @@ public class SendReplyKeyboardRequest : SendRequest
     public string Text { get; set; }
     public ReplyKeyboardModel Keyboard { get; set; }
 
+    public SendReplyKeyboardRequest()
+    {
+        
+    }
+
     private SendReplyKeyboardRequest(long chatId, string text, ReplyKeyboardModel keyboard) : base(chatId)
     {
         Text = text;

@@ -7,6 +7,11 @@ public class SendTextMessageRequest : SendRequest
         Text = text;
     }
 
+    public SendTextMessageRequest()
+    {
+        
+    }
+
     public string Text { get; }
 
     public static SendTextMessageRequest Create(long chatId, string text)

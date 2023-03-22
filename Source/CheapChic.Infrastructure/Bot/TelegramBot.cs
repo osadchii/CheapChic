@@ -1,6 +1,5 @@
 using CheapChic.Data;
 using CheapChic.Data.Entities;
-using CheapChic.Infrastructure.Bot.Models;
 using CheapChic.Infrastructure.Bot.Requests;
 using CheapChic.Infrastructure.Configuration.Models;
 using CheapChic.Infrastructure.Constants;

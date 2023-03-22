@@ -1,4 +1,4 @@
-﻿namespace CheapChic.Infrastructure.UpdateHandlers.Message.Text;
+﻿namespace CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text;
 
 public interface ITextMessageHandler
 {

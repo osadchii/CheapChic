@@ -5,7 +5,9 @@ using CheapChic.Infrastructure.Handlers.Telegram.Commands;
 using CheapChic.Infrastructure.HostedServices;
 using CheapChic.Infrastructure.UpdateHandlers.CallbackQuery;
 using CheapChic.Infrastructure.UpdateHandlers.Message;
-using CheapChic.Infrastructure.UpdateHandlers.Message.Text;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Text;
 using CheapChic.Infrastructure.UpdateHandlers.MyChatMember;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,11 +17,13 @@ namespace CheapChic.Infrastructure.Configuration;
 
 public static class ServiceRegistry
 {
+    private const string DefaultConnectionStringName = "Default";
+    
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<CheapChicContext>(options =>
         {
-            var connectionString = configuration.GetConnectionString("Default");
+            var connectionString = configuration.GetConnectionString(DefaultConnectionStringName);
             options.UseNpgsql(connectionString,
                 builder => { builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery); });
         });
@@ -42,6 +46,8 @@ public static class ServiceRegistry
         
         services.AddTransient<IMessageHandler, MessageHandler>();
         services.AddTransient<ITextMessageHandler, TextMessageHandler>();
+        services.AddTransient<IManagementTextMessageHandler, ManagementTextHandler>();
+        services.AddTransient<IRetailerTextMessageHandler, RetailerTextMessageHandler>();
         
         services.AddTransient<IMyChatMemberHandler, MyChatMemberHandler>();
 
