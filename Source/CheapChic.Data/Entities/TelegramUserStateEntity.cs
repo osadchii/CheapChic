@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using CheapChic.Data.Attributes;
 using CheapChic.Data.Constants;
+using CheapChic.Data.Enums;
 
 namespace CheapChic.Data.Entities;
 
@@ -18,4 +19,9 @@ public class TelegramUserStateEntity : BaseEntity
     public Guid UserId { get; set; }
 
     public TelegramUserEntity User { get; set; }
+
+    [Required] 
+    public State State { get; set; }
+
+    public string Data { get; set; }
 }

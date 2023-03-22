@@ -1,4 +1,5 @@
 using CheapChic.Data.Entities;
+using CheapChic.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -69,6 +70,9 @@ public sealed class CheapChicContext : DbContext
                     p.TelegramBotId
                 })
                 .IsUnique();
+
+            entity.Property(p => p.State)
+                .HasConversion(new EnumToStringConverter<State>());
         });
 
         base.OnModelCreating(modelBuilder);
