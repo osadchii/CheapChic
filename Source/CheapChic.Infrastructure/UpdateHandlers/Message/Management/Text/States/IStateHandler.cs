@@ -1,6 +1,6 @@
 ﻿using CheapChic.Data.Entities;
 
-namespace CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States;
+namespace CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States;
 
 public interface IStateHandler
 {

@@ -4,11 +4,11 @@ using CheapChic.Infrastructure.Bot;
 using CheapChic.Infrastructure.Bot.Constants;
 using CheapChic.Infrastructure.Bot.Requests;
 using CheapChic.Infrastructure.Extensions;
-using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.AddBot.Models;
-using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.MainMenu;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.AddBot.Models;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.MainMenu;
 using Microsoft.EntityFrameworkCore;
 
-namespace CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.AddBot;
+namespace CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.AddBot;
 
 public interface IAddBotNameStateHandler : IStateHandler
 {

@@ -1,8 +1,8 @@
 ﻿using CheapChic.Data.Entities;
 using CheapChic.Infrastructure.Bot.Constants;
-using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.AddBot;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.AddBot;
 
-namespace CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.MainMenu;
+namespace CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.MainMenu;
 
 public interface IMainMenuStateHandler : IStateHandler
 {

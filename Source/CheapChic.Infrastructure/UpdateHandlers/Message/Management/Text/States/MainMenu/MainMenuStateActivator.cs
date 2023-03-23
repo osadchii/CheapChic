@@ -6,29 +6,29 @@ using CheapChic.Infrastructure.Bot.Menus;
 using CheapChic.Infrastructure.Bot.Requests;
 using CheapChic.Infrastructure.Services.UserService;
 
-namespace CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.AddBot;
+namespace CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.MainMenu;
 
-public interface IAddBotNameStateActivator : IStateActivator
+public interface IMainMenuStateActivator : IStateActivator
 {
 }
 
-public class AddBotNameStateActivator : IAddBotNameStateActivator
+public class MainMenuStateActivator : IMainMenuStateActivator
 {
     private readonly ITelegramBot _telegramBot;
     private readonly IUserService _userService;
 
-    public AddBotNameStateActivator(ITelegramBot telegramBot, IUserService userService)
+    public MainMenuStateActivator(ITelegramBot telegramBot, IUserService userService)
     {
         _telegramBot = telegramBot;
         _userService = userService;
     }
-    
+
     public async Task Activate(string token, TelegramUserEntity user, object stateData, CancellationToken cancellationToken = default)
     {
-        var request = SendReplyKeyboardRequest.Create(user.ChatId, MessageText.Management.AddBot.SendName,
-            ConstantMenu.Management.AddBotName);
+        var request = SendReplyKeyboardRequest.Create(user.ChatId, MessageText.Management.Common.SelectAMenuItem,
+            ConstantMenu.Management.ManagementMainMenu);
 
         await _telegramBot.SendReplyKeyboard(token, request, cancellationToken);
-        await _userService.SetUserState(user.Id, State.ManagementAddBotName, stateData, cancellationToken);
+        await _userService.SetUserState(user.Id, State.ManagementMainMenu, stateData, cancellationToken);
     }
 }

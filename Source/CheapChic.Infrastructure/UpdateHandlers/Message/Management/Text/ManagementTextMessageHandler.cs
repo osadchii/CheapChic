@@ -1,9 +1,9 @@
 ﻿using CheapChic.Data;
 using CheapChic.Data.Enums;
 using CheapChic.Infrastructure.Services.UserService;
-using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States;
-using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.AddBot;
-using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.MainMenu;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.AddBot;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.MainMenu;
 using Microsoft.EntityFrameworkCore;
 
 namespace CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text;
