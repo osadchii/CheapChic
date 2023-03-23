@@ -132,6 +132,20 @@ public class TelegramBot : ITelegramBot
         return telegramMessage;
     }
 
+    public async Task<bool> TestToken(string token, CancellationToken cancellationToken)
+    {
+        var client = GetClient(token);
+
+        try
+        {
+            return await client.TestApiAsync(cancellationToken);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private async Task<(Guid? UserId, Guid? ChannelId)> GetUserChannelIds(long chatId,
         CancellationToken cancellationToken = default)
     {

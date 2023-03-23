@@ -3,6 +3,9 @@
 public enum State
 {
     ManagementMainMenu,
-    ManagementAddBot,
+    
+    ManagementAddBotToken,
+    ManagementAddBotName,
+    
     ManagementMyBots
 }

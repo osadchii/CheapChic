@@ -6,6 +6,11 @@ public static class JsonExtensions
 {
     public static string ToJson(this object obj)
     {
+        if (obj is null)
+        {
+            return null;
+        }
+        
         return JsonConvert.SerializeObject(obj);
     }
 

@@ -1,26 +1,36 @@
 ﻿using CheapChic.Data;
-using CheapChic.Infrastructure.Bot;
-using CheapChic.Infrastructure.Bot.Menus;
-using CheapChic.Infrastructure.Bot.Requests;
+using CheapChic.Data.Enums;
 using CheapChic.Infrastructure.Services.UserService;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.AddBot;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.MainMenu;
 using Microsoft.EntityFrameworkCore;
 
 namespace CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text;
 
 public class ManagementTextHandler : IManagementTextMessageHandler
 {
-    private readonly ITelegramBot _telegramBot;
     private readonly CheapChicContext _context;
     private readonly IUserService _userService;
+    private readonly IMainMenuStateActivator _mainMenuStateActivator;
+    private readonly IMainMenuStateHandler _mainMenuStateHandler;
+    private readonly IAddBotStateHandler _addBotStateHandler;
+    private readonly IAddBotNameStateHandler _addBotNameStateHandler;
 
-    public ManagementTextHandler(ITelegramBot telegramBot, CheapChicContext context, IUserService userService)
+    public ManagementTextHandler(CheapChicContext context, IUserService userService,
+        IMainMenuStateActivator mainMenuStateActivator, IMainMenuStateHandler mainMenuStateHandler,
+        IAddBotStateHandler addBotStateHandler, IAddBotNameStateHandler addBotNameStateHandler)
     {
-        _telegramBot = telegramBot;
         _context = context;
         _userService = userService;
+        _mainMenuStateActivator = mainMenuStateActivator;
+        _mainMenuStateHandler = mainMenuStateHandler;
+        _addBotStateHandler = addBotStateHandler;
+        _addBotNameStateHandler = addBotNameStateHandler;
     }
 
-    public async Task HandleTextMessage(string token, Telegram.Bot.Types.Message message, CancellationToken cancellationToken = default)
+    public async Task HandleTextMessage(string token, Telegram.Bot.Types.Message message,
+        CancellationToken cancellationToken = default)
     {
         var chatId = message.Chat.Id;
         var text = message.Text!;
@@ -37,13 +47,24 @@ public class ManagementTextHandler : IManagementTextMessageHandler
         }
 
         var userState = await _userService.GetUserState(user.Id, cancellationToken);
-        
 
-        await _telegramBot.SendText(token,
-            SendTextMessageRequest.Create(chatId, $"Your said: {text}"), cancellationToken);
+        if (userState is null)
+        {
+            await _mainMenuStateActivator.Activate(token, user, null, cancellationToken);
+            return;
+        }
 
-        await _telegramBot.SendReplyKeyboard(token,
-            SendReplyKeyboardRequest.Create(chatId, $"Your said: {text}", ConstantMenu.Management.ManagementMainMenu),
-            cancellationToken);
+        IStateHandler stateHandler = userState.State switch
+        {
+            State.ManagementMainMenu => _mainMenuStateHandler,
+            State.ManagementAddBotToken => _addBotStateHandler,
+            State.ManagementAddBotName => _addBotNameStateHandler,
+            _ => null
+        };
+
+        if (stateHandler is not null)
+        {
+            await stateHandler.Handle(token, user, text, userState.Data, cancellationToken);
+        }
     }
 }

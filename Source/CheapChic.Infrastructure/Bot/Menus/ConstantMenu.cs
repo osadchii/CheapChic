@@ -38,5 +38,20 @@ public static class ConstantMenu
 
             return builder.Build();
         }
+
+        public static ReplyKeyboardModel AddBot =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Management.Common.Back)
+                .Build();
+
+        public static ReplyKeyboardModel AddBotName =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Management.Common.Back)
+                .Build();
+
     }
 }

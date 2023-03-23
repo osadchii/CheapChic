@@ -1,4 +1,7 @@
 ﻿using CheapChic.Data;
+using CheapChic.Data.Entities;
+using CheapChic.Data.Enums;
+using CheapChic.Infrastructure.Extensions;
 using CheapChic.Infrastructure.Services.UserService.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +19,7 @@ public class UserService : IUserService
     public Task<UserState> GetUserState(Guid userId, Guid? botId, CancellationToken cancellationToken = default)
     {
         return _context.TelegramUserStates
+            .AsNoTracking()
             .Where(x => x.UserId == userId)
             .Where(x => x.TelegramBotId == botId)
             .Select(x => new UserState
@@ -24,5 +28,34 @@ public class UserService : IUserService
                 Data = x.Data
             })
             .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task SetUserState(Guid userId, Guid? botId, State state, object data,
+        CancellationToken cancellationToken = default)
+    {
+        var userState = await _context.TelegramUserStates
+            .Where(x => x.UserId == userId)
+            .Where(x => x.TelegramBotId == botId)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (userState is null)
+        {
+            userState = new TelegramUserStateEntity
+            {
+                UserId = userId,
+                TelegramBotId = botId,
+                State = state,
+                Data = data.ToJson()
+            };
+
+            await _context.AddAsync(userState, cancellationToken);
+        }
+        else
+        {
+            userState.State = state;
+            userState.Data = data.ToJson();
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

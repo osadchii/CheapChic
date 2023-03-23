@@ -24,19 +24,19 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CheapChic.Infrastructure\CheapChic.Infrastructure.csproj"/>
+        <ProjectReference Include="..\CheapChic.Infrastructure\CheapChic.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.3"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
     <Target Name="CreateLocalFiles" BeforeTargets="Build" Condition="'$(ConfigurationName)|$(BuildingInsideVisualStudio)'=='Debug|True' or '$(ConfigurationName)|$(BuildingByReSharper)'=='Debug|True'">
-        <Copy SourceFiles="appsettings.json" DestinationFiles="appsettings.local.json" Condition="!Exists('appsettings.local.json')"/>
+        <Copy SourceFiles="appsettings.json" DestinationFiles="appsettings.local.json" Condition="!Exists('appsettings.local.json')" />
     </Target>
 
 </Project>

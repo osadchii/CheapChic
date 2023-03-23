@@ -3,9 +3,12 @@ using CheapChic.Infrastructure.Bot;
 using CheapChic.Infrastructure.Configuration.Models;
 using CheapChic.Infrastructure.Handlers.Telegram.Commands;
 using CheapChic.Infrastructure.HostedServices;
+using CheapChic.Infrastructure.Services.UserService;
 using CheapChic.Infrastructure.UpdateHandlers.CallbackQuery;
 using CheapChic.Infrastructure.UpdateHandlers.Message;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.AddBot;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text.States.MainMenu;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Text;
 using CheapChic.Infrastructure.UpdateHandlers.MyChatMember;
@@ -48,9 +51,18 @@ public static class ServiceRegistry
         services.AddTransient<ITextMessageHandler, TextMessageHandler>();
         services.AddTransient<IManagementTextMessageHandler, ManagementTextHandler>();
         services.AddTransient<IRetailerTextMessageHandler, RetailerTextMessageHandler>();
+
+        services.AddTransient<IMainMenuStateActivator, MainMenuStateActivator>();
+        services.AddTransient<IMainMenuStateHandler, MainMenuStateHandler>();
+
+        services.AddTransient<IAddBotStateActivator, AddBotStateActivator>();
+        services.AddTransient<IAddBotStateHandler, AddBotStateHandler>();
+        services.AddTransient<IAddBotNameStateActivator, AddBotNameStateActivator>();
+        services.AddTransient<IAddBotNameStateHandler, AddBotNameStateHandler>();
         
         services.AddTransient<IMyChatMemberHandler, MyChatMemberHandler>();
 
         services.AddTransient<ITelegramBot, TelegramBot>();
+        services.AddTransient<IUserService, UserService>();
     }
 }
