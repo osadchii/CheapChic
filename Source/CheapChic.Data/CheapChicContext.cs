@@ -19,6 +19,7 @@ public sealed class CheapChicContext : DbContext
     public DbSet<TelegramChannelEntity> TelegramChannels { get; set; }
     public DbSet<TelegramMessageEntity> TelegramMessages { get; set; }
     public DbSet<TelegramUserStateEntity> TelegramUserStates { get; set; }
+    public DbSet<TelegramBotChannelMappingEntity> TelegramBotChannelMappings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,8 +41,6 @@ public sealed class CheapChicContext : DbContext
         {
             entity.HasIndex(p => p.ChatId)
                 .IsUnique();
-
-            entity.HasIndex(p => p.OwnerId);
         });
 
         modelBuilder.Entity<TelegramMessageEntity>(entity =>
@@ -56,7 +55,7 @@ public sealed class CheapChicContext : DbContext
 
             entity.HasIndex(p => p.ChannelId);
             entity.HasIndex(p => p.UserId);
-            entity.HasIndex(p => p.TelegramBotId);
+            entity.HasIndex(p => p.BotId);
 
             entity.Property(p => p.Type)
                 .HasConversion(new EnumToStringConverter<TelegramMessageEntity.TelegramMessageType>());
@@ -66,13 +65,23 @@ public sealed class CheapChicContext : DbContext
         {
             entity.HasIndex(p => new
                 {
-                    p.UserId,
-                    p.TelegramBotId
+                    p.UserId, 
+                    p.BotId
                 })
                 .IsUnique();
 
             entity.Property(p => p.State)
                 .HasConversion(new EnumToStringConverter<State>());
+        });
+
+        modelBuilder.Entity<TelegramBotChannelMappingEntity>(entity =>
+        {
+            entity.HasIndex(p => new
+                {
+                    p.BotId,
+                    p.ChannelId
+                })
+                .IsUnique();
         });
 
         base.OnModelCreating(modelBuilder);

@@ -21,7 +21,7 @@ public class UserService : IUserService
         return _context.TelegramUserStates
             .AsNoTracking()
             .Where(x => x.UserId == userId)
-            .Where(x => x.TelegramBotId == botId)
+            .Where(x => x.BotId == botId)
             .Select(x => new UserState
             {
                 State = x.State,
@@ -35,7 +35,7 @@ public class UserService : IUserService
     {
         var userState = await _context.TelegramUserStates
             .Where(x => x.UserId == userId)
-            .Where(x => x.TelegramBotId == botId)
+            .Where(x => x.BotId == botId)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (userState is null)
@@ -43,7 +43,7 @@ public class UserService : IUserService
             userState = new TelegramUserStateEntity
             {
                 UserId = userId,
-                TelegramBotId = botId,
+                BotId = botId,
                 State = state,
                 Data = data.ToJson()
             };

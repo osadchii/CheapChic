@@ -3,6 +3,7 @@ using System;
 using CheapChic.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CheapChic.Data.Migrations
 {
     [DbContext(typeof(CheapChicContext))]
-    partial class CheapChicContextModelSnapshot : ModelSnapshot
+    [Migration("20230323190058_BotChannelMapping")]
+    partial class BotChannelMapping
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,9 +43,14 @@ namespace CheapChic.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("TelegramBotId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ChannelId");
+
+                    b.HasIndex("TelegramBotId");
 
                     b.HasIndex("BotId", "ChannelId")
                         .IsUnique();
@@ -234,21 +242,19 @@ namespace CheapChic.Data.Migrations
 
             modelBuilder.Entity("CheapChic.Data.Entities.TelegramBotChannelMappingEntity", b =>
                 {
-                    b.HasOne("CheapChic.Data.Entities.TelegramBotEntity", "Bot")
-                        .WithMany()
-                        .HasForeignKey("BotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CheapChic.Data.Entities.TelegramChannelEntity", "Channel")
                         .WithMany()
                         .HasForeignKey("ChannelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Bot");
+                    b.HasOne("CheapChic.Data.Entities.TelegramBotEntity", "TelegramBot")
+                        .WithMany()
+                        .HasForeignKey("TelegramBotId");
 
                     b.Navigation("Channel");
+
+                    b.Navigation("TelegramBot");
                 });
 
             modelBuilder.Entity("CheapChic.Data.Entities.TelegramBotEntity", b =>

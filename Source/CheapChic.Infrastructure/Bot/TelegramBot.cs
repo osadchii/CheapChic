@@ -77,7 +77,7 @@ public class TelegramBot : ITelegramBot
             Type = TelegramMessageEntity.TelegramMessageType.Text,
             Message = request.ToJson(),
             UserId = userId,
-            TelegramBotId = botId,
+            BotId = botId,
             ChannelId = channelId
         };
 
@@ -122,7 +122,7 @@ public class TelegramBot : ITelegramBot
             Type = TelegramMessageEntity.TelegramMessageType.ReplyKeyboard,
             Message = request.ToJson(),
             UserId = userId,
-            TelegramBotId = botId,
+            BotId = botId,
             ChannelId = null
         };
 

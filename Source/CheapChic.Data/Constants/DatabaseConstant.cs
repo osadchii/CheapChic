@@ -9,4 +9,5 @@ internal static class DatabaseConstant
     public const string TelegramMessageTable = "TelegramMessage";
     public const string TelegramChannelTable = "TelegramChannel";
     public const string TelegramUserStateTable = "TelegramUserState";
+    public const string TelegramBotChannelMappingTable = "TelegramBotChannelMapping";
 }

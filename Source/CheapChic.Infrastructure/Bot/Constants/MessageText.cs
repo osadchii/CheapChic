@@ -29,7 +29,12 @@ public static class MessageText
 
             public const string NameIsTooLong = "Слишком длинное название бота. Максимальная длина 16 символов.";
 
-            public const string SuccessfulAdded = "Бот успешно добавлен.";
+            public const string SuccessfulAdded = "Бот успешно добавлен. Теперь добавьте бот на канал для публикации объявлений и сделайте его администратором.";
+
+            public static string BotAddedToChannel(string botName, string channelTitle) =>
+                $"Бот <b>{botName}</b> был добавлен на канал <b>{channelTitle}</b>. Объявления будут публиковаться на этот канал.";
+            public static string BotRemovedFromChannel(string botName, string channelTitle) =>
+                $"Бот <b>{botName}</b> был удален с канала <b>{channelTitle}</b>. Объявления не будут публиковаться на этот канал.";
         }
     }
 }

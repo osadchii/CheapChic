@@ -11,9 +11,9 @@ public class TelegramMessageEntity : BaseEntity
     [Required] public int MessageId { get; set; }
 
     [ForeignKey(nameof(TelegramBotEntity))]
-    public Guid? TelegramBotId { get; set; }
+    public Guid? BotId { get; set; }
 
-    public TelegramBotEntity TelegramBot { get; set; }
+    public TelegramBotEntity Bot { get; set; }
 
     [ForeignKey(nameof(TelegramUserEntity))]
     public Guid? UserId { get; set; }

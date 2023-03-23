@@ -10,10 +10,8 @@ public class TelegramChannelEntity : BaseEntity
 {
     [Required]
     public long ChatId { get; set; }
-    
-    [Required]
-    [ForeignKey(nameof(TelegramUserEntity))]
-    public Guid OwnerId { get; set; }
 
-    public TelegramUserEntity Owner { get; set; }
+    [Required]
+    [MaxLength(DatabaseLimit.TelegramChannelName)]
+    public string ChannelName { get; set; }
 }

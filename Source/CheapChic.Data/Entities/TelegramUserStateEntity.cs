@@ -10,9 +10,9 @@ namespace CheapChic.Data.Entities;
 public class TelegramUserStateEntity : BaseEntity
 {
     [ForeignKey(nameof(TelegramBotEntity))]
-    public Guid? TelegramBotId { get; set; }
+    public Guid? BotId { get; set; }
 
-    public TelegramBotEntity TelegramBot { get; set; }
+    public TelegramBotEntity Bot { get; set; }
 
     [Required]
     [ForeignKey(nameof(TelegramUserEntity))]
