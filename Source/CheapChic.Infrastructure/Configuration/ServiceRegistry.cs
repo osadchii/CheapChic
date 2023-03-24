@@ -11,6 +11,7 @@ using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.AddBot;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.MainMenu;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Text;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Text.States.MainMenu;
 using CheapChic.Infrastructure.UpdateHandlers.MyChatMember;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -41,7 +42,7 @@ public static class ServiceRegistry
         services.Configure<ManagementBotOptions>(
             configuration.GetSection(ManagementBotOptions.OptionName));
 
-        services.AddHttpClient();
+        services.AddHttpClient<ITelegramBot, TelegramBot>();
 
         services.AddHostedService<WebhookHostedService>();
 
@@ -52,17 +53,19 @@ public static class ServiceRegistry
         services.AddTransient<IManagementTextMessageHandler, ManagementTextHandler>();
         services.AddTransient<IRetailerTextMessageHandler, RetailerTextMessageHandler>();
 
-        services.AddTransient<IMainMenuStateActivator, MainMenuStateActivator>();
-        services.AddTransient<IMainMenuStateHandler, MainMenuStateHandler>();
+        services.AddTransient<IManagementMainMenuStateActivator, ManagementMainMenuStateActivator>();
+        services.AddTransient<IManagementMainMenuStateHandler, ManagementMainMenuStateHandler>();
 
-        services.AddTransient<IAddBotStateActivator, AddBotStateActivator>();
-        services.AddTransient<IAddBotStateHandler, AddBotStateHandler>();
-        services.AddTransient<IAddBotNameStateActivator, AddBotNameStateActivator>();
-        services.AddTransient<IAddBotNameStateHandler, AddBotNameStateHandler>();
+        services.AddTransient<IManagementAddBotStateActivator, ManagementAddBotStateActivator>();
+        services.AddTransient<IManagementAddBotStateHandler, ManagementAddBotStateHandler>();
+        services.AddTransient<IManagementAddBotNameStateActivator, ManagementAddBotNameStateActivator>();
+        services.AddTransient<IManagementAddBotNameStateHandler, ManagementAddBotNameStateHandler>();
+
+        services.AddTransient<IRetailerMainMenuStateActivator, RetailerMainMenuStateActivator>();
+        services.AddTransient<IRetailerMainMenuStateHandler, RetailerMainMenuStateHandler>();
         
         services.AddTransient<IMyChatMemberHandler, MyChatMemberHandler>();
 
-        services.AddTransient<ITelegramBot, TelegramBot>();
         services.AddTransient<IUserService, UserService>();
     }
 }

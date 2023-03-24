@@ -1,6 +1,5 @@
 using CheapChic.Data;
 using CheapChic.Data.Entities;
-using CheapChic.Infrastructure.Bot;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types.Enums;

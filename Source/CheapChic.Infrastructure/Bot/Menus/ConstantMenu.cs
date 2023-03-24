@@ -9,7 +9,7 @@ public static class ConstantMenu
 {
     public static class Management
     {
-        public static ReplyKeyboardModel ManagementMainMenu =>
+        public static ReplyKeyboardModel MainMenu =>
             ReplyKeyboardBuilder
                 .Create()
                 .AddRow()
@@ -39,19 +39,31 @@ public static class ConstantMenu
             return builder.Build();
         }
 
-        public static ReplyKeyboardModel AddBot =>
+        public static ReplyKeyboardModel AddBotMenu =>
             ReplyKeyboardBuilder
                 .Create()
                 .AddRow()
                 .AddButton(MenuText.Management.Common.Back)
                 .Build();
 
-        public static ReplyKeyboardModel AddBotName =>
+        public static ReplyKeyboardModel AddBotNameMenu =>
             ReplyKeyboardBuilder
                 .Create()
                 .AddRow()
                 .AddButton(MenuText.Management.Common.Back)
                 .Build();
 
+    }
+    
+    public static class Retailer
+    {
+        public static ReplyKeyboardModel MainMenu =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Retailer.MainMenu.MyAnnouncements)
+                .AddRow()
+                .AddButton(MenuText.Retailer.MainMenu.AddAnnouncement)
+                .Build();
     }
 }

@@ -7,5 +7,7 @@ public enum State
     ManagementAddBotToken,
     ManagementAddBotName,
     
-    ManagementMyBots
+    ManagementMyBots,
+    
+    RetailerMainMenu
 }

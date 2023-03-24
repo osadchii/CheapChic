@@ -1,6 +1,4 @@
-﻿using CheapChic.Data.Constants;
-
-namespace CheapChic.Infrastructure.Bot.Constants;
+﻿namespace CheapChic.Infrastructure.Bot.Constants;
 
 public static class MessageText
 {
@@ -35,6 +33,14 @@ public static class MessageText
                 $"Бот <b>{botName}</b> был добавлен на канал <b>{channelTitle}</b>. Объявления будут публиковаться на этот канал.";
             public static string BotRemovedFromChannel(string botName, string channelTitle) =>
                 $"Бот <b>{botName}</b> был удален с канала <b>{channelTitle}</b>. Объявления не будут публиковаться на этот канал.";
+        }
+    }
+    
+    public static class Retailer
+    {
+        public static class Common
+        {
+            public const string SelectAMenuItem = "Выберите пункт меню";
         }
     }
 }

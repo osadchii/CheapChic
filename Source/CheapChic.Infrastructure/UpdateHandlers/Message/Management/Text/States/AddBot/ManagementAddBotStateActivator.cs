@@ -8,16 +8,16 @@ using CheapChic.Infrastructure.Services.UserService;
 
 namespace CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.AddBot;
 
-public interface IAddBotStateActivator : IStateActivator
+public interface IManagementAddBotStateActivator : IManagementStateActivator
 {
 }
 
-public class AddBotStateActivator : IAddBotStateActivator
+public class ManagementAddBotStateActivator : IManagementAddBotStateActivator
 {
     private readonly ITelegramBot _telegramBot;
     private readonly IUserService _userService;
 
-    public AddBotStateActivator(ITelegramBot telegramBot, IUserService userService)
+    public ManagementAddBotStateActivator(ITelegramBot telegramBot, IUserService userService)
     {
         _telegramBot = telegramBot;
         _userService = userService;
@@ -26,7 +26,7 @@ public class AddBotStateActivator : IAddBotStateActivator
     public async Task Activate(string token, TelegramUserEntity user, object stateData, CancellationToken cancellationToken = default)
     {
         var request = SendReplyKeyboardRequest.Create(user.ChatId, MessageText.Management.AddBot.SendToken,
-            ConstantMenu.Management.AddBot);
+            ConstantMenu.Management.AddBotMenu);
 
         await _telegramBot.SendReplyKeyboard(token, request, cancellationToken);
         await _userService.SetUserState(user.Id, State.ManagementAddBotToken, stateData, cancellationToken);
