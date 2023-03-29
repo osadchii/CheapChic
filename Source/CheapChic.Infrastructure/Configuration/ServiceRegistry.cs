@@ -3,6 +3,7 @@ using CheapChic.Infrastructure.Bot;
 using CheapChic.Infrastructure.Configuration.Models;
 using CheapChic.Infrastructure.Handlers.Telegram.Commands;
 using CheapChic.Infrastructure.HostedServices;
+using CheapChic.Infrastructure.Services.AdMessageBuilder;
 using CheapChic.Infrastructure.Services.PhotoAdService;
 using CheapChic.Infrastructure.Services.PhotoService;
 using CheapChic.Infrastructure.Services.TelegramBotService;
@@ -54,6 +55,7 @@ public static class ServiceRegistry
         services.AddHttpClient<ITelegramBot, TelegramBot>();
 
         services.AddHostedService<WebhookHostedService>();
+        services.AddHostedService<AdPublisher>();
 
         services.AddTransient<ICallbackQueryHandler, CallbackQueryHandler>();
 
@@ -101,11 +103,15 @@ public static class ServiceRegistry
         services.AddTransient<IAddAdPhotoStateActivator, AddAdPhotoStateActivator>();
         services.AddTransient<IAddAdPhotoStateHandler, AddAdPhotoStateHandler>();
 
+        services.AddTransient<IAddAdConfirmationStateActivator, AddAdConfirmationStateActivator>();
+        services.AddTransient<IAddAdConfirmationStateHandler, AddAdConfirmationStateHandler>();
+
         services.AddTransient<IMyChatMemberHandler, MyChatMemberHandler>();
 
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<ITelegramBotService, TelegramBotService>();
         services.AddTransient<IPhotoService, PhotoService>();
         services.AddTransient<IPhotoAdService, PhotoAdService>();
+        services.AddTransient<IAdMessageBuilder, AdMessageBuilder>();
     }
 }

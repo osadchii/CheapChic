@@ -16,5 +16,6 @@ public enum State
     RetailerAddAdName,
     RetailerAddAdDescription,
     RetailerAddAdPrice,
-    RetailerAddAdPhoto
+    RetailerAddAdPhoto,
+    RetailerAddAdConfirmation
 }

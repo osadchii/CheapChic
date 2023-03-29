@@ -13,12 +13,14 @@ public class AddAdPhotoStateHandler : IAddAdPhotoStateHandler
 {
     private readonly IAddAdPriceStateActivator _addAdPriceStateActivator;
     private readonly IAddAdPhotoStateActivator _addAdPhotoStateActivator;
+    private readonly IAddAdConfirmationStateActivator _addAdConfirmationStateActivator;
 
     public AddAdPhotoStateHandler(IAddAdPriceStateActivator addAdPriceStateActivator,
-        IAddAdPhotoStateActivator addAdPhotoStateActivator)
+        IAddAdPhotoStateActivator addAdPhotoStateActivator, IAddAdConfirmationStateActivator addAdConfirmationStateActivator)
     {
         _addAdPriceStateActivator = addAdPriceStateActivator;
         _addAdPhotoStateActivator = addAdPhotoStateActivator;
+        _addAdConfirmationStateActivator = addAdConfirmationStateActivator;
     }
 
     public async Task Handle(TelegramBotEntity bot, TelegramUserEntity user, string text, string stateData,
@@ -35,11 +37,10 @@ public class AddAdPhotoStateHandler : IAddAdPhotoStateHandler
                 await _addAdPhotoStateActivator.Activate(bot, user, state, cancellationToken);
                 break;
             case MenuText.Retailer.AddAdPhotoMenu.Done:
-                await _addAdPhotoStateActivator.Activate(bot, user, state, cancellationToken);
+                await _addAdConfirmationStateActivator.Activate(bot, user, state, cancellationToken);
                 break;
             default:
                 await _addAdPhotoStateActivator.Activate(bot, user, state, cancellationToken);
-
                 break;
         }
     }

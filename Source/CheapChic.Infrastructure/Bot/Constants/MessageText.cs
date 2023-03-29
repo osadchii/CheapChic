@@ -58,6 +58,9 @@ public static class MessageText
             public const string PhotoAddedToTheAd = "Фото добавлено к объявлению";
             public const string CantAddPhotoToTheAd = "Невозможно добавить это фото к объявлению. Используйте другое";
             public const string PhotoAlreadyInTheAd = "Фото уже добавлено к объявлению";
+            public const string AdConfirmation = "Почти все готово! Публикуем?";
+            public const string AdPublished =
+                "Объявление успешно создано. Оно будет опубликовано на канале в ближайшее время";
             public static string CantAddMoreThanPhotos(int count) =>
                 $"Невозможно добавить больше {count} фото к объявлению";
         }

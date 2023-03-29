@@ -15,6 +15,8 @@ public class AdPhotoEntity : BaseEntity
     public AdEntity Ad { get; set; }
 
     [Required]
-    [MaxLength(DatabaseLimit.AdPhotoId)]
-    public string PhotoId { get; set; }
+    [ForeignKey(nameof(PhotoEntity))]
+    public Guid PhotoId { get; set; }
+
+    public PhotoEntity Photo { get; set; }
 }

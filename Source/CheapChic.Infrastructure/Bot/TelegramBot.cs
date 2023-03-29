@@ -100,7 +100,7 @@ public class TelegramBot : ITelegramBot
             Selective = false,
             ResizeKeyboard = true,
             InputFieldPlaceholder = text,
-            OneTimeKeyboard = true
+            OneTimeKeyboard = false
         };
 
         var userId = await GetUserId(chatId, cancellationToken);
@@ -152,6 +152,7 @@ public class TelegramBot : ITelegramBot
         var botId = await GetTelegramBotId(token, cancellationToken);
 
         var photoContents = await _context.Photos
+            .AsNoTracking()
             .Where(x => photoIds.Contains(x.Id))
             .OrderBy(x => x.CreatedOn)
             .Select(x => x.Content)
@@ -164,13 +165,14 @@ public class TelegramBot : ITelegramBot
             {
                 var ms = new MemoryStream(x);
                 memoryStreams.Add(ms);
-                return new InputMediaPhoto(new InputMedia(ms, "adPhoto"));
+                return new InputMediaPhoto(new InputMedia(ms, Guid.NewGuid().ToString()));
             })
             .ToArray();
 
         if (mediaGroup.Length > 0)
         {
             mediaGroup[0].Caption = request.Text;
+            mediaGroup[0].ParseMode = ParseMode.Html;
         }
 
         var client = GetClient(token);

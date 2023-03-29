@@ -136,5 +136,14 @@ public static class ConstantMenu
                 .AddRow()
                 .AddButton(MenuText.Retailer.Common.Back)
                 .Build();
+
+        public static ReplyKeyboardModel AddAnnouncementConfirmationMenu =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Retailer.AddAdConfirmationMenu.Publish)
+                .AddRow()
+                .AddButton(MenuText.Retailer.Common.Back)
+                .Build();
     }
 }

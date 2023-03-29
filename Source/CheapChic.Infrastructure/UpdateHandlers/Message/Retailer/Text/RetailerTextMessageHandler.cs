@@ -16,6 +16,7 @@ public class RetailerTextMessageHandler : IRetailerTextMessageHandler
     private readonly IAddAdDescriptionStateHandler _addAdDescriptionStateHandler;
     private readonly IAddAdPriceStateHandler _addAdPriceStateHandler;
     private readonly IAddAdPhotoStateHandler _addAdPhotoStateHandler;
+    private readonly IAddAdConfirmationStateHandler _addAdConfirmationStateHandler;
     private readonly ITelegramBotService _telegramBotService;
 
     public RetailerTextMessageHandler(IUserService userService,
@@ -25,7 +26,8 @@ public class RetailerTextMessageHandler : IRetailerTextMessageHandler
         IAddAdNameStateHandler addAdNameStateHandler,
         IAddAdDescriptionStateHandler addAdDescriptionStateHandler,
         IAddAdPriceStateHandler addAdPriceStateHandler,
-        IAddAdPhotoStateHandler addAdPhotoStateHandler, ITelegramBotService telegramBotService)
+        IAddAdPhotoStateHandler addAdPhotoStateHandler, ITelegramBotService telegramBotService,
+        IAddAdConfirmationStateHandler addAdConfirmationStateHandler)
     {
         _userService = userService;
         _retailerMainMenuStateActivator = retailerMainMenuStateActivator;
@@ -36,6 +38,7 @@ public class RetailerTextMessageHandler : IRetailerTextMessageHandler
         _addAdPriceStateHandler = addAdPriceStateHandler;
         _addAdPhotoStateHandler = addAdPhotoStateHandler;
         _telegramBotService = telegramBotService;
+        _addAdConfirmationStateHandler = addAdConfirmationStateHandler;
     }
 
     public async Task HandleMessage(string token, Telegram.Bot.Types.Message message,
@@ -74,6 +77,7 @@ public class RetailerTextMessageHandler : IRetailerTextMessageHandler
             State.RetailerAddAdDescription => _addAdDescriptionStateHandler,
             State.RetailerAddAdPrice => _addAdPriceStateHandler,
             State.RetailerAddAdPhoto => _addAdPhotoStateHandler,
+            State.RetailerAddAdConfirmation => _addAdConfirmationStateHandler,
             _ => null
         };
 

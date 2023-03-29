@@ -94,7 +94,10 @@ public sealed class CheapChicContext : DbContext
             entity.HasIndex(p => p.DateOfLastPublication);
         });
 
-        modelBuilder.Entity<AdPhotoEntity>(entity => { entity.HasIndex(p => p.AdId); });
+        modelBuilder.Entity<AdPhotoEntity>(entity =>
+        {
+            entity.HasIndex(p => p.AdId);
+        });
 
         modelBuilder.Entity<PhotoEntity>(entity =>
         {

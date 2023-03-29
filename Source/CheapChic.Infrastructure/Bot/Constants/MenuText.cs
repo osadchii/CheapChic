@@ -53,5 +53,10 @@ public static class MenuText
             public const string ClearPhotos = "Удалить добавленные фотографии";
             public const string Done = "Готово";
         }
+        
+        public static class AddAdConfirmationMenu
+        {
+            public const string Publish = "Опубликовать";
+        }
     }
 }

@@ -35,7 +35,7 @@ public class RetailerPhotoMessageHandler : IRetailerPhotoMessageHandler
             return;
         }
 
-        var photo = photos.First();
+        var photo = photos.OrderByDescending(x => x.FileSize).First();
 
         var user = await _userService.GetUser(chatId, cancellationToken);
 
