@@ -16,6 +16,15 @@ public class UserService : IUserService
         _context = context;
     }
 
+    public Task<TelegramUserEntity> GetUser(long chatId, CancellationToken cancellationToken = default)
+    {
+        return _context.TelegramUsers
+            .AsNoTracking()
+            .Where(x => !x.Disabled)
+            .Where(x => x.ChatId == chatId)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public Task<UserState> GetUserState(Guid userId, Guid? botId, CancellationToken cancellationToken = default)
     {
         return _context.TelegramUserStates

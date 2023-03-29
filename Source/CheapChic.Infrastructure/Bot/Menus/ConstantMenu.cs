@@ -17,7 +17,8 @@ public static class ConstantMenu
                 .AddButton(MenuText.Management.MainMenu.MyBots)
                 .Build();
 
-        public static async Task<ReplyKeyboardModel> MyBotsMenu(CheapChicContext context, Guid ownerId, CancellationToken cancellationToken = default)
+        public static async Task<ReplyKeyboardModel> MyBotsMenu(CheapChicContext context, Guid ownerId,
+            CancellationToken cancellationToken = default)
         {
             var builder = ReplyKeyboardBuilder.Create();
 
@@ -39,6 +40,30 @@ public static class ConstantMenu
             return builder.Build();
         }
 
+        public static async Task<ReplyKeyboardModel> MyBotsSettingsMenu(CheapChicContext context, Guid botId,
+            CancellationToken cancellationToken = default)
+        {
+            var builder = ReplyKeyboardBuilder
+                .Create();
+
+            var botSettings = await context.TelegramBots
+                .AsNoTracking()
+                .Where(x => x.Id == botId)
+                .Select(x => new { x.Disabled })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            builder = builder
+                .AddRow()
+                .AddButton(botSettings.Disabled
+                    ? MenuText.Management.MyBotsMenu.Enable
+                    : MenuText.Management.MyBotsMenu.Disable);
+
+            return builder
+                .AddRow()
+                .AddButton(MenuText.Management.Common.Back)
+                .Build();
+        }
+
         public static ReplyKeyboardModel AddBotMenu =>
             ReplyKeyboardBuilder
                 .Create()
@@ -52,9 +77,8 @@ public static class ConstantMenu
                 .AddRow()
                 .AddButton(MenuText.Management.Common.Back)
                 .Build();
-
     }
-    
+
     public static class Retailer
     {
         public static ReplyKeyboardModel MainMenu =>
@@ -64,6 +88,53 @@ public static class ConstantMenu
                 .AddButton(MenuText.Retailer.MainMenu.MyAnnouncements)
                 .AddRow()
                 .AddButton(MenuText.Retailer.MainMenu.AddAnnouncement)
+                .Build();
+
+        public static ReplyKeyboardModel AddAnnouncementMenu =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Retailer.AddAdMenu.Sell)
+                .AddButton(MenuText.Retailer.AddAdMenu.Buy)
+                .AddRow()
+                .AddButton(MenuText.Retailer.AddAdMenu.OfferAService)
+                .AddButton(MenuText.Retailer.AddAdMenu.LookingForAService)
+                .AddRow()
+                .AddButton(MenuText.Retailer.Common.Back)
+                .Build();
+
+        public static ReplyKeyboardModel AddAnnouncementNameMenu =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Retailer.Common.Back)
+                .Build();
+
+        public static ReplyKeyboardModel AddAnnouncementDescriptionMenu =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Retailer.Common.Back)
+                .Build();
+
+        public static ReplyKeyboardModel AddAnnouncementPriceMenu =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Retailer.AddAdPriceMenu.Negotiated)
+                .AddRow()
+                .AddButton(MenuText.Retailer.Common.Back)
+                .Build();
+
+        public static ReplyKeyboardModel AddAnnouncementPhotoMenu =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Retailer.AddAdPhotoMenu.ClearPhotos)
+                .AddRow()
+                .AddButton(MenuText.Retailer.AddAdPhotoMenu.Done)
+                .AddRow()
+                .AddButton(MenuText.Retailer.Common.Back)
                 .Build();
     }
 }

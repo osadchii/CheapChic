@@ -20,7 +20,7 @@ public class TextMessageHandler : ITextMessageHandler
     }
 
 
-    public Task HandleTextMessage(string token, Telegram.Bot.Types.Message message,
+    public Task HandleMessage(string token, Telegram.Bot.Types.Message message,
         CancellationToken cancellationToken = default)
     {
         var managementBotToken = _managementBotOptions.Value.Token;
@@ -28,6 +28,6 @@ public class TextMessageHandler : ITextMessageHandler
 
         ITextMessageHandler handler = isManagementBot ? _managementTextMessageHandler : _retailerTextMessageHandler;
 
-        return handler.HandleTextMessage(token, message, cancellationToken);
+        return handler.HandleMessage(token, message, cancellationToken);
     }
 }

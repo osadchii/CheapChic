@@ -10,25 +10,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.AddBot;
 
-public interface IManagementAddBotNameStateHandler : IManagementStateHandler
+public interface IAddBotNameStateHandler : IManagementStateHandler
 {
 }
 
-public class ManagementAddBotNameStateHandler : IManagementAddBotNameStateHandler
+public class AddBotNameStateHandler : IAddBotNameStateHandler
 {
     private readonly IManagementMainMenuStateActivator _managementMainMenuStateActivator;
-    private readonly IManagementAddBotStateActivator _managementAddBotStateActivator;
-    private readonly IManagementAddBotNameStateActivator _managementAddBotNameStateActivator;
+    private readonly IAddBotStateActivator _addBotStateActivator;
+    private readonly IAddBotNameStateActivator _addBotNameStateActivator;
     private readonly ITelegramBot _telegramBot;
     private readonly CheapChicContext _context;
 
-    public ManagementAddBotNameStateHandler(IManagementMainMenuStateActivator managementMainMenuStateActivator, ITelegramBot telegramBot,
-        IManagementAddBotStateActivator managementAddBotStateActivator, CheapChicContext context,
-        IManagementAddBotNameStateActivator managementAddBotNameStateActivator)
+    public AddBotNameStateHandler(IManagementMainMenuStateActivator managementMainMenuStateActivator, ITelegramBot telegramBot,
+        IAddBotStateActivator addBotStateActivator, CheapChicContext context,
+        IAddBotNameStateActivator addBotNameStateActivator)
     {
         _managementMainMenuStateActivator = managementMainMenuStateActivator;
-        _managementAddBotStateActivator = managementAddBotStateActivator;
-        _managementAddBotNameStateActivator = managementAddBotNameStateActivator;
+        _addBotStateActivator = addBotStateActivator;
+        _addBotNameStateActivator = addBotNameStateActivator;
         _telegramBot = telegramBot;
         _context = context;
     }
@@ -42,7 +42,7 @@ public class ManagementAddBotNameStateHandler : IManagementAddBotNameStateHandle
         switch (text)
         {
             case MenuText.Management.Common.Back:
-                await _managementAddBotStateActivator.Activate(token, user, null, cancellationToken);
+                await _addBotStateActivator.Activate(token, user, null, cancellationToken);
                 break;
             default:
                 if (trimmedText.Length > 16)
@@ -50,7 +50,7 @@ public class ManagementAddBotNameStateHandler : IManagementAddBotNameStateHandle
                     var request =
                         SendTextMessageRequest.Create(user.ChatId, MessageText.Management.AddBot.NameIsTooLong);
                     await _telegramBot.SendText(token, request, cancellationToken);
-                    await _managementAddBotNameStateActivator.Activate(token, user, state, cancellationToken);
+                    await _addBotNameStateActivator.Activate(token, user, state, cancellationToken);
                     
                     return;
                 }
@@ -67,7 +67,7 @@ public class ManagementAddBotNameStateHandler : IManagementAddBotNameStateHandle
                     var request =
                         SendTextMessageRequest.Create(user.ChatId, MessageText.Management.AddBot.NameAlreadyExists);
                     await _telegramBot.SendText(token, request, cancellationToken);
-                    await _managementAddBotNameStateActivator.Activate(token, user, state, cancellationToken);
+                    await _addBotNameStateActivator.Activate(token, user, state, cancellationToken);
                     
                     return;
                 }

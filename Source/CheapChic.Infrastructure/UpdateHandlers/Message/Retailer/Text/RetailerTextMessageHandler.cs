@@ -1,32 +1,47 @@
-﻿using CheapChic.Data;
-using CheapChic.Data.Entities;
-using CheapChic.Data.Enums;
+﻿using CheapChic.Data.Enums;
+using CheapChic.Infrastructure.Services.TelegramBotService;
 using CheapChic.Infrastructure.Services.UserService;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Text.States.AddAd;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Text.States.MainMenu;
-using Microsoft.EntityFrameworkCore;
 
 namespace CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Text;
 
 public class RetailerTextMessageHandler : IRetailerTextMessageHandler
 {
-    private readonly CheapChicContext _context;
     private readonly IUserService _userService;
     private readonly IRetailerMainMenuStateActivator _retailerMainMenuStateActivator;
     private readonly IRetailerMainMenuStateHandler _retailerMainMenuStateHandler;
+    private readonly IAddAdStateHandler _addAdStateHandler;
+    private readonly IAddAdNameStateHandler _addAdNameStateHandler;
+    private readonly IAddAdDescriptionStateHandler _addAdDescriptionStateHandler;
+    private readonly IAddAdPriceStateHandler _addAdPriceStateHandler;
+    private readonly IAddAdPhotoStateHandler _addAdPhotoStateHandler;
+    private readonly ITelegramBotService _telegramBotService;
 
-    public RetailerTextMessageHandler(CheapChicContext context, IUserService userService,
-        IRetailerMainMenuStateActivator retailerMainMenuStateActivator, IRetailerMainMenuStateHandler retailerMainMenuStateHandler)
+    public RetailerTextMessageHandler(IUserService userService,
+        IRetailerMainMenuStateActivator retailerMainMenuStateActivator,
+        IRetailerMainMenuStateHandler retailerMainMenuStateHandler,
+        IAddAdStateHandler addAdStateHandler,
+        IAddAdNameStateHandler addAdNameStateHandler,
+        IAddAdDescriptionStateHandler addAdDescriptionStateHandler,
+        IAddAdPriceStateHandler addAdPriceStateHandler,
+        IAddAdPhotoStateHandler addAdPhotoStateHandler, ITelegramBotService telegramBotService)
     {
-        _context = context;
         _userService = userService;
         _retailerMainMenuStateActivator = retailerMainMenuStateActivator;
         _retailerMainMenuStateHandler = retailerMainMenuStateHandler;
+        _addAdStateHandler = addAdStateHandler;
+        _addAdNameStateHandler = addAdNameStateHandler;
+        _addAdDescriptionStateHandler = addAdDescriptionStateHandler;
+        _addAdPriceStateHandler = addAdPriceStateHandler;
+        _addAdPhotoStateHandler = addAdPhotoStateHandler;
+        _telegramBotService = telegramBotService;
     }
 
-    public async Task HandleTextMessage(string token, Telegram.Bot.Types.Message message,
+    public async Task HandleMessage(string token, Telegram.Bot.Types.Message message,
         CancellationToken cancellationToken = default)
     {
-        var telegramBot = await GetTelegramBot(token, cancellationToken);
+        var telegramBot = await _telegramBotService.GetTelegramBot(token, cancellationToken);
 
         if (telegramBot is null)
         {
@@ -36,11 +51,7 @@ public class RetailerTextMessageHandler : IRetailerTextMessageHandler
         var chatId = message.Chat.Id;
         var text = message.Text!;
 
-        var user = await _context.TelegramUsers
-            .AsNoTracking()
-            .Where(x => !x.Disabled)
-            .Where(x => x.ChatId == chatId)
-            .FirstOrDefaultAsync(cancellationToken);
+        var user = await _userService.GetUser(chatId, cancellationToken);
 
         if (user is null)
         {
@@ -58,6 +69,11 @@ public class RetailerTextMessageHandler : IRetailerTextMessageHandler
         IRetailerStateHandler stateHandler = userState.State switch
         {
             State.RetailerMainMenu => _retailerMainMenuStateHandler,
+            State.RetailerAddAdAction => _addAdStateHandler,
+            State.RetailerAddAdName => _addAdNameStateHandler,
+            State.RetailerAddAdDescription => _addAdDescriptionStateHandler,
+            State.RetailerAddAdPrice => _addAdPriceStateHandler,
+            State.RetailerAddAdPhoto => _addAdPhotoStateHandler,
             _ => null
         };
 
@@ -65,13 +81,5 @@ public class RetailerTextMessageHandler : IRetailerTextMessageHandler
         {
             await stateHandler.Handle(telegramBot, user, text, userState.Data, cancellationToken);
         }
-    }
-
-    private Task<TelegramBotEntity> GetTelegramBot(string token, CancellationToken cancellationToken)
-    {
-        return _context.TelegramBots
-            .AsNoTracking()
-            .Where(x => x.Disabled == false)
-            .FirstOrDefaultAsync(x => x.Token == token, cancellationToken);
     }
 }

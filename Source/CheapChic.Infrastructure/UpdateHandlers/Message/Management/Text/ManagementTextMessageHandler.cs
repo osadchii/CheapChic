@@ -3,6 +3,7 @@ using CheapChic.Data.Enums;
 using CheapChic.Infrastructure.Services.UserService;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.AddBot;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.MainMenu;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text.States.MyBots;
 using Microsoft.EntityFrameworkCore;
 
 namespace CheapChic.Infrastructure.UpdateHandlers.Message.Management.Text;
@@ -13,22 +14,30 @@ public class ManagementTextHandler : IManagementTextMessageHandler
     private readonly IUserService _userService;
     private readonly IManagementMainMenuStateActivator _managementMainMenuStateActivator;
     private readonly IManagementMainMenuStateHandler _managementMainMenuStateHandler;
-    private readonly IManagementAddBotStateHandler _managementAddBotStateHandler;
-    private readonly IManagementAddBotNameStateHandler _managementAddBotNameStateHandler;
+    private readonly IAddBotStateHandler _addBotStateHandler;
+    private readonly IAddBotNameStateHandler _addBotNameStateHandler;
+    private readonly IMyBotsStateHandler _myBotsStateHandler;
+    private readonly IMyBotsSettingsStateHandler _myBotsSettingsStateHandler;
 
     public ManagementTextHandler(CheapChicContext context, IUserService userService,
-        IManagementMainMenuStateActivator managementMainMenuStateActivator, IManagementMainMenuStateHandler managementMainMenuStateHandler,
-        IManagementAddBotStateHandler managementAddBotStateHandler, IManagementAddBotNameStateHandler managementAddBotNameStateHandler)
+        IManagementMainMenuStateActivator managementMainMenuStateActivator,
+        IManagementMainMenuStateHandler managementMainMenuStateHandler,
+        IAddBotStateHandler addBotStateHandler,
+        IAddBotNameStateHandler addBotNameStateHandler,
+        IMyBotsStateHandler myBotsStateHandler,
+        IMyBotsSettingsStateHandler myBotsSettingsStateHandler)
     {
         _context = context;
         _userService = userService;
         _managementMainMenuStateActivator = managementMainMenuStateActivator;
         _managementMainMenuStateHandler = managementMainMenuStateHandler;
-        _managementAddBotStateHandler = managementAddBotStateHandler;
-        _managementAddBotNameStateHandler = managementAddBotNameStateHandler;
+        _addBotStateHandler = addBotStateHandler;
+        _addBotNameStateHandler = addBotNameStateHandler;
+        _myBotsStateHandler = myBotsStateHandler;
+        _myBotsSettingsStateHandler = myBotsSettingsStateHandler;
     }
 
-    public async Task HandleTextMessage(string token, Telegram.Bot.Types.Message message,
+    public async Task HandleMessage(string token, Telegram.Bot.Types.Message message,
         CancellationToken cancellationToken = default)
     {
         var chatId = message.Chat.Id;
@@ -56,8 +65,10 @@ public class ManagementTextHandler : IManagementTextMessageHandler
         IManagementStateHandler stateHandler = userState.State switch
         {
             State.ManagementMainMenu => _managementMainMenuStateHandler,
-            State.ManagementAddBotToken => _managementAddBotStateHandler,
-            State.ManagementAddBotName => _managementAddBotNameStateHandler,
+            State.ManagementAddBotToken => _addBotStateHandler,
+            State.ManagementAddBotName => _addBotNameStateHandler,
+            State.ManagementMyBots => _myBotsStateHandler,
+            State.ManagementMyBotsSettings => _myBotsSettingsStateHandler,
             _ => null
         };
 

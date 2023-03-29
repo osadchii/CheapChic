@@ -20,6 +20,9 @@ public sealed class CheapChicContext : DbContext
     public DbSet<TelegramMessageEntity> TelegramMessages { get; set; }
     public DbSet<TelegramUserStateEntity> TelegramUserStates { get; set; }
     public DbSet<TelegramBotChannelMappingEntity> TelegramBotChannelMappings { get; set; }
+    public DbSet<AdEntity> Ads { get; set; }
+    public DbSet<AdPhotoEntity> AdPhotos { get; set; }
+    public DbSet<PhotoEntity> Photos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -65,7 +68,7 @@ public sealed class CheapChicContext : DbContext
         {
             entity.HasIndex(p => new
                 {
-                    p.UserId, 
+                    p.UserId,
                     p.BotId
                 })
                 .IsUnique();
@@ -81,6 +84,21 @@ public sealed class CheapChicContext : DbContext
                     p.BotId,
                     p.ChannelId
                 })
+                .IsUnique();
+        });
+
+        modelBuilder.Entity<AdEntity>(entity =>
+        {
+            entity.HasIndex(p => p.BotId);
+            entity.HasIndex(p => p.UserId);
+            entity.HasIndex(p => p.DateOfLastPublication);
+        });
+
+        modelBuilder.Entity<AdPhotoEntity>(entity => { entity.HasIndex(p => p.AdId); });
+
+        modelBuilder.Entity<PhotoEntity>(entity =>
+        {
+            entity.HasIndex(p => p.Hash)
                 .IsUnique();
         });
 

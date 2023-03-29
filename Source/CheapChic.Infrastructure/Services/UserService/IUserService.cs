@@ -1,4 +1,5 @@
-﻿using CheapChic.Data.Enums;
+﻿using CheapChic.Data.Entities;
+using CheapChic.Data.Enums;
 using CheapChic.Infrastructure.Services.UserService.Models;
 
 namespace CheapChic.Infrastructure.Services.UserService;
@@ -15,4 +16,6 @@ public interface IUserService
 
     Task SetUserState(Guid userId, State state, object data,
         CancellationToken cancellationToken = default) => SetUserState(userId, null, state, data, cancellationToken);
+
+    Task<TelegramUserEntity> GetUser(long chatId, CancellationToken cancellationToken = default);
 }

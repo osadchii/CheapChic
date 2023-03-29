@@ -8,6 +8,13 @@ public enum State
     ManagementAddBotName,
     
     ManagementMyBots,
+    ManagementMyBotsSettings,
     
-    RetailerMainMenu
+    RetailerMainMenu,
+    
+    RetailerAddAdAction,
+    RetailerAddAdName,
+    RetailerAddAdDescription,
+    RetailerAddAdPrice,
+    RetailerAddAdPhoto
 }

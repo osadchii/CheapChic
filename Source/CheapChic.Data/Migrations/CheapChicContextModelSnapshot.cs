@@ -22,6 +22,121 @@ namespace CheapChic.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("CheapChic.Data.Entities.AdEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<Guid>("BotId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DateOfLastPublication")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(3072)
+                        .HasColumnType("character varying(3072)");
+
+                    b.Property<bool>("Disable")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BotId");
+
+                    b.HasIndex("DateOfLastPublication");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Ad", "CheapChic");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.AdPhotoEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AdId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PhotoId")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdId");
+
+                    b.ToTable("AdPhoto", "CheapChic");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.PhotoEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Hash")
+                        .IsUnique();
+
+                    b.ToTable("Photo", "CheapChic");
+                });
+
             modelBuilder.Entity("CheapChic.Data.Entities.TelegramBotChannelMappingEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -230,6 +345,36 @@ namespace CheapChic.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("TelegramUserState", "CheapChic");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.AdEntity", b =>
+                {
+                    b.HasOne("CheapChic.Data.Entities.TelegramBotEntity", "Bot")
+                        .WithMany()
+                        .HasForeignKey("BotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CheapChic.Data.Entities.TelegramUserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bot");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.AdPhotoEntity", b =>
+                {
+                    b.HasOne("CheapChic.Data.Entities.AdEntity", "Ad")
+                        .WithMany()
+                        .HasForeignKey("AdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ad");
                 });
 
             modelBuilder.Entity("CheapChic.Data.Entities.TelegramBotChannelMappingEntity", b =>

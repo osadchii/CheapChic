@@ -25,14 +25,19 @@ public static class MessageText
             public const string NameAlreadyExists =
                 "Бот с этим названием у вас уже есть. Добавьте новое уникальное название";
 
-            public const string NameIsTooLong = "Слишком длинное название бота. Максимальная длина 16 символов.";
+            public const string NameIsTooLong = "Слишком длинное название бота. Максимальная длина 16 символов";
 
-            public const string SuccessfulAdded = "Бот успешно добавлен. Теперь добавьте бот на канал для публикации объявлений и сделайте его администратором.";
+            public const string SuccessfulAdded = "Бот успешно добавлен. Теперь добавьте бот на канал для публикации объявлений и сделайте его администратором";
 
             public static string BotAddedToChannel(string botName, string channelTitle) =>
-                $"Бот <b>{botName}</b> был добавлен на канал <b>{channelTitle}</b>. Объявления будут публиковаться на этот канал.";
+                $"Бот <b>{botName}</b> был добавлен на канал <b>{channelTitle}</b>. Объявления будут публиковаться на этот канал";
             public static string BotRemovedFromChannel(string botName, string channelTitle) =>
-                $"Бот <b>{botName}</b> был удален с канала <b>{channelTitle}</b>. Объявления не будут публиковаться на этот канал.";
+                $"Бот <b>{botName}</b> был удален с канала <b>{channelTitle}</b>. Объявления не будут публиковаться на этот канал";
+        }
+        
+        public static class MyBots
+        {
+            public static string BotWithNameNotFound(string name) => $"Телеграм бот с именем {name} не найден";
         }
     }
     
@@ -41,6 +46,20 @@ public static class MessageText
         public static class Common
         {
             public const string SelectAMenuItem = "Выберите пункт меню";
+        }
+        
+        public static class AddAd
+        {
+            public const string SelectAction = "Выберите действие";
+            public const string SendName = "Отправьте краткое название вашего объявления (до 128 символов)";
+            public const string SendDescription = "Отправьте подробное описание вашего объявления (до 3072 символов)";
+            public const string SendPrice = "Отправьте цену";
+            public const string SendPhoto = "Пришлите фотографии для вашего объявления (до 4 фотографий) и нажмите \"Готово\"";
+            public const string PhotoAddedToTheAd = "Фото добавлено к объявлению";
+            public const string CantAddPhotoToTheAd = "Невозможно добавить это фото к объявлению. Используйте другое";
+            public const string PhotoAlreadyInTheAd = "Фото уже добавлено к объявлению";
+            public static string CantAddMoreThanPhotos(int count) =>
+                $"Невозможно добавить больше {count} фото к объявлению";
         }
     }
 }

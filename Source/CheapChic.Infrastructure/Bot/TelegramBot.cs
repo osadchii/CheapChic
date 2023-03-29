@@ -7,6 +7,7 @@ using CheapChic.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -130,6 +131,82 @@ public class TelegramBot : ITelegramBot
         await _context.SaveChangesAsync(cancellationToken);
 
         return telegramMessage;
+    }
+
+    public async Task<byte[]> DownloadFile(string token, string fileId, CancellationToken cancellationToken = default)
+    {
+        var client = GetClient(token);
+        using var ms = new MemoryStream();
+        await client.GetInfoAndDownloadFileAsync(fileId, ms, cancellationToken);
+        return ms.ToArray();
+    }
+
+    public async Task<TelegramMessageEntity[]> SendPhoto(string token, SendMediaGroupRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var chatId = request.ChatId;
+        var photoIds = request.PhotoIds;
+
+        var (userId, channelId) = await GetUserChannelIds(chatId, cancellationToken);
+
+        var botId = await GetTelegramBotId(token, cancellationToken);
+
+        var photoContents = await _context.Photos
+            .Where(x => photoIds.Contains(x.Id))
+            .OrderBy(x => x.CreatedOn)
+            .Select(x => x.Content)
+            .ToListAsync(cancellationToken);
+
+        var memoryStreams = new List<MemoryStream>();
+
+        var mediaGroup = photoContents
+            .Select(x =>
+            {
+                var ms = new MemoryStream(x);
+                memoryStreams.Add(ms);
+                return new InputMediaPhoto(new InputMedia(ms, "adPhoto"));
+            })
+            .ToArray();
+
+        if (mediaGroup.Length > 0)
+        {
+            mediaGroup[0].Caption = request.Text;
+        }
+
+        var client = GetClient(token);
+
+        try
+        {
+            var messages = await client.SendMediaGroupAsync(chatId, mediaGroup, cancellationToken: cancellationToken);
+
+            var telegramMessages = messages
+                .Select(x => new TelegramMessageEntity
+                {
+                    MessageId = x.MessageId,
+                    Type = TelegramMessageEntity.TelegramMessageType.Photo,
+                    UserId = userId,
+                    ChannelId = channelId,
+                    BotId = botId,
+                    Message = request.ToJson()
+                })
+                .ToArray();
+
+            await _context.AddRangeAsync(telegramMessages, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return telegramMessages;
+        }
+        catch
+        {
+            return Array.Empty<TelegramMessageEntity>();
+        }
+        finally
+        {
+            foreach (var ms in memoryStreams)
+            {
+                await ms.DisposeAsync();
+            }
+        }
     }
 
     public async Task<bool> TestToken(string token, CancellationToken cancellationToken)

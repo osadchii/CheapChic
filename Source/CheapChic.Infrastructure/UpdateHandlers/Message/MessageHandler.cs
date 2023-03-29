@@ -1,5 +1,7 @@
 using CheapChic.Data;
 using CheapChic.Data.Entities;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Document;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Photo;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Common.Text;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types.Enums;
@@ -10,11 +12,16 @@ public class MessageHandler : IMessageHandler
 {
     private readonly CheapChicContext _context;
     private readonly ITextMessageHandler _textMessageHandler;
+    private readonly IDocumentMessageHandler _documentMessageHandler;
+    private readonly IPhotoMessageHandler _photoMessageHandler;
 
-    public MessageHandler(CheapChicContext context, ITextMessageHandler textMessageHandler)
+    public MessageHandler(CheapChicContext context, ITextMessageHandler textMessageHandler,
+        IDocumentMessageHandler documentMessageHandler, IPhotoMessageHandler photoMessageHandler)
     {
         _context = context;
         _textMessageHandler = textMessageHandler;
+        _documentMessageHandler = documentMessageHandler;
+        _photoMessageHandler = photoMessageHandler;
     }
 
     public async Task HandleMessage(string token, Telegram.Bot.Types.Message message,
@@ -22,52 +29,22 @@ public class MessageHandler : IMessageHandler
     {
         await EnsureUserCreated(message, cancellationToken);
 
-        switch (message.Type)
+        ITypeMessageHandler messageHandler = message.Type switch
         {
-            case MessageType.Text:
-                await _textMessageHandler.HandleTextMessage(token, message, cancellationToken);
-                break;
-            case MessageType.Unknown:
-            case MessageType.Photo:
-            case MessageType.Audio:
-            case MessageType.Video:
-            case MessageType.Voice:
-            case MessageType.Document:
-            case MessageType.Sticker:
-            case MessageType.Location:
-            case MessageType.Contact:
-            case MessageType.Venue:
-            case MessageType.Game:
-            case MessageType.VideoNote:
-            case MessageType.Invoice:
-            case MessageType.SuccessfulPayment:
-            case MessageType.WebsiteConnected:
-            case MessageType.ChatMembersAdded:
-            case MessageType.ChatMemberLeft:
-            case MessageType.ChatTitleChanged:
-            case MessageType.ChatPhotoChanged:
-            case MessageType.MessagePinned:
-            case MessageType.ChatPhotoDeleted:
-            case MessageType.GroupCreated:
-            case MessageType.SupergroupCreated:
-            case MessageType.ChannelCreated:
-            case MessageType.MigratedToSupergroup:
-            case MessageType.MigratedFromGroup:
-            case MessageType.Poll:
-            case MessageType.Dice:
-            case MessageType.MessageAutoDeleteTimerChanged:
-            case MessageType.ProximityAlertTriggered:
-            case MessageType.WebAppData:
-            case MessageType.VideoChatScheduled:
-            case MessageType.VideoChatStarted:
-            case MessageType.VideoChatEnded:
-            case MessageType.VideoChatParticipantsInvited:
-            default:
-                break;
+            MessageType.Text => _textMessageHandler,
+            MessageType.Photo => _photoMessageHandler,
+            MessageType.Document => _documentMessageHandler,
+            _ => null
+        };
+
+        if (messageHandler is not null)
+        {
+            await messageHandler.HandleMessage(token, message, cancellationToken);
         }
     }
 
-    private async Task EnsureUserCreated(Telegram.Bot.Types.Message message, CancellationToken cancellationToken = default)
+    private async Task EnsureUserCreated(Telegram.Bot.Types.Message message,
+        CancellationToken cancellationToken = default)
     {
         var chat = message.Chat;
 
@@ -85,7 +62,7 @@ public class MessageHandler : IMessageHandler
                 Username = chat.Username,
                 Disabled = false
             };
-            
+
             await _context.AddAsync(user, cancellationToken);
         }
         else

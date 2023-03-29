@@ -32,6 +32,7 @@ public class TelegramMessageEntity : BaseEntity
     public enum TelegramMessageType
     {
         Text,
-        ReplyKeyboard
+        ReplyKeyboard,
+        Photo
     }
 }
