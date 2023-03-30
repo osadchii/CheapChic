@@ -17,10 +17,153 @@ namespace CheapChic.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.3")
+                .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("CheapChic.Data.Entities.AdEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<Guid>("BotId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DateOfLastPublication")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(3072)
+                        .HasColumnType("character varying(3072)");
+
+                    b.Property<bool>("Disable")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BotId");
+
+                    b.HasIndex("DateOfLastPublication");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Ad", "CheapChic");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.AdPhotoEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AdId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PhotoId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdId");
+
+                    b.HasIndex("PhotoId");
+
+                    b.ToTable("AdPhoto", "CheapChic");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.PhotoEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Hash")
+                        .IsUnique();
+
+                    b.ToTable("Photo", "CheapChic");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.TelegramBotChannelMappingEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BotId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ChannelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChannelId");
+
+                    b.HasIndex("BotId", "ChannelId")
+                        .IsUnique();
+
+                    b.ToTable("TelegramBotChannelMapping", "CheapChic");
+                });
 
             modelBuilder.Entity("CheapChic.Data.Entities.TelegramBotEntity", b =>
                 {
@@ -34,11 +177,26 @@ namespace CheapChic.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Currency")
+                        .HasMaxLength(5)
+                        .HasColumnType("character varying(5)");
+
                     b.Property<bool>("Disabled")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("PublishEveryHours")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PublishForDays")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Token")
                         .IsRequired()
@@ -53,6 +211,80 @@ namespace CheapChic.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("TelegramBot", "CheapChic");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.TelegramChannelEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ChannelName")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<long>("ChatId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId")
+                        .IsUnique();
+
+                    b.ToTable("TelegramChannel", "CheapChic");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.TelegramMessageEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("BotId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ChannelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BotId");
+
+                    b.HasIndex("ChannelId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "ChannelId", "MessageId")
+                        .IsUnique();
+
+                    b.ToTable("TelegramMessage", "CheapChic");
                 });
 
             modelBuilder.Entity("CheapChic.Data.Entities.TelegramUserEntity", b =>
@@ -90,6 +322,98 @@ namespace CheapChic.Data.Migrations
                     b.ToTable("TelegramUser", "CheapChic");
                 });
 
+            modelBuilder.Entity("CheapChic.Data.Entities.TelegramUserStateEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("BotId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BotId");
+
+                    b.HasIndex("UserId", "BotId")
+                        .IsUnique();
+
+                    b.ToTable("TelegramUserState", "CheapChic");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.AdEntity", b =>
+                {
+                    b.HasOne("CheapChic.Data.Entities.TelegramBotEntity", "Bot")
+                        .WithMany()
+                        .HasForeignKey("BotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CheapChic.Data.Entities.TelegramUserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bot");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.AdPhotoEntity", b =>
+                {
+                    b.HasOne("CheapChic.Data.Entities.AdEntity", "Ad")
+                        .WithMany()
+                        .HasForeignKey("AdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CheapChic.Data.Entities.PhotoEntity", "Photo")
+                        .WithMany()
+                        .HasForeignKey("PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ad");
+
+                    b.Navigation("Photo");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.TelegramBotChannelMappingEntity", b =>
+                {
+                    b.HasOne("CheapChic.Data.Entities.TelegramBotEntity", "Bot")
+                        .WithMany()
+                        .HasForeignKey("BotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CheapChic.Data.Entities.TelegramChannelEntity", "Channel")
+                        .WithMany()
+                        .HasForeignKey("ChannelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bot");
+
+                    b.Navigation("Channel");
+                });
+
             modelBuilder.Entity("CheapChic.Data.Entities.TelegramBotEntity", b =>
                 {
                     b.HasOne("CheapChic.Data.Entities.TelegramUserEntity", "Owner")
@@ -99,6 +423,44 @@ namespace CheapChic.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.TelegramMessageEntity", b =>
+                {
+                    b.HasOne("CheapChic.Data.Entities.TelegramBotEntity", "Bot")
+                        .WithMany()
+                        .HasForeignKey("BotId");
+
+                    b.HasOne("CheapChic.Data.Entities.TelegramChannelEntity", "Channel")
+                        .WithMany()
+                        .HasForeignKey("ChannelId");
+
+                    b.HasOne("CheapChic.Data.Entities.TelegramUserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Bot");
+
+                    b.Navigation("Channel");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CheapChic.Data.Entities.TelegramUserStateEntity", b =>
+                {
+                    b.HasOne("CheapChic.Data.Entities.TelegramBotEntity", "Bot")
+                        .WithMany()
+                        .HasForeignKey("BotId");
+
+                    b.HasOne("CheapChic.Data.Entities.TelegramUserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bot");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

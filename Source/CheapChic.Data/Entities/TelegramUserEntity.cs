@@ -1,11 +1,11 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using CheapChic.Data.Attributes;
 using CheapChic.Data.Constants;
 
 namespace CheapChic.Data.Entities;
 
-[Table(DatabaseConstant.TelegramUserTable, Schema = DatabaseConstant.DefaultSchema)]
+[CheapChicTable(DatabaseConstant.TelegramUserTable)]
 public class TelegramUserEntity : BaseEntity
 {
     [Required] public long ChatId { get; set; }

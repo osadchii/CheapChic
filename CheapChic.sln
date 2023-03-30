@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheapChic.Api", "Source\Che
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheapChic.Infrastructure", "Source\CheapChic.Infrastructure\CheapChic.Infrastructure.csproj", "{DAA38BC3-1EFE-44B2-8262-F119C56A1C20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheapChic.Telegram", "Source\CheapChic.Telegram\CheapChic.Telegram.csproj", "{6BDC2A3C-B558-422D-A990-B2B35E86D20E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheapChic.Data", "Source\CheapChic.Data\CheapChic.Data.csproj", "{FE1F3018-38A4-4D73-9245-81D76EEEF32F}"
 EndProject
 Global
@@ -18,7 +16,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{1E2A9B6F-9EBC-40D2-B2BA-1A42F048B91E} = {4F1A45FF-78AC-48A2-866C-1CCE8196533D}
 		{DAA38BC3-1EFE-44B2-8262-F119C56A1C20} = {4F1A45FF-78AC-48A2-866C-1CCE8196533D}
-		{6BDC2A3C-B558-422D-A990-B2B35E86D20E} = {4F1A45FF-78AC-48A2-866C-1CCE8196533D}
 		{FE1F3018-38A4-4D73-9245-81D76EEEF32F} = {4F1A45FF-78AC-48A2-866C-1CCE8196533D}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
@@ -30,10 +27,6 @@ Global
 		{DAA38BC3-1EFE-44B2-8262-F119C56A1C20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAA38BC3-1EFE-44B2-8262-F119C56A1C20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAA38BC3-1EFE-44B2-8262-F119C56A1C20}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6BDC2A3C-B558-422D-A990-B2B35E86D20E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6BDC2A3C-B558-422D-A990-B2B35E86D20E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6BDC2A3C-B558-422D-A990-B2B35E86D20E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6BDC2A3C-B558-422D-A990-B2B35E86D20E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FE1F3018-38A4-4D73-9245-81D76EEEF32F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FE1F3018-38A4-4D73-9245-81D76EEEF32F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE1F3018-38A4-4D73-9245-81D76EEEF32F}.Release|Any CPU.ActiveCfg = Release|Any CPU

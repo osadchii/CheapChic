@@ -41,13 +41,16 @@ public static class HandleUpdate
             switch (update.Type)
             {
                 case UpdateType.Message:
-                    await _messageHandler.HandleMessage(request.Token, update.Message!);
+                    await _messageHandler.HandleMessage(request.Token, update.Message!,
+                        cancellationToken);
                     break;
                 case UpdateType.CallbackQuery:
-                    await _callbackQueryHandler.HandleCallbackQuery(request.Token, update.CallbackQuery!);
+                    await _callbackQueryHandler.HandleCallbackQuery(request.Token, update.CallbackQuery!,
+                        cancellationToken);
                     break;
                 case UpdateType.MyChatMember:
-                    await _myChatMemberHandler.HandleMyChatMember(request.Token, update.MyChatMember!);
+                    await _myChatMemberHandler.HandleMyChatMember(request.Token, update.MyChatMember!,
+                        cancellationToken);
                     break;
                 case UpdateType.Unknown:
                 case UpdateType.InlineQuery:

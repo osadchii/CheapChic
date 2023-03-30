@@ -1,59 +1,65 @@
+using CheapChic.Data;
+using CheapChic.Infrastructure.Bot;
 using CheapChic.Infrastructure.Configuration.Models;
-using CheapChic.Infrastructure.Constants;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Telegram.Bot;
 
 namespace CheapChic.Infrastructure.HostedServices;
 
 public class WebhookHostedService : IHostedService
 {
-    private readonly IOptions<ApplicationOptions> _applicationOptions;
-    private readonly HttpClient _httpClient;
-    private readonly IOptions<ManagementBotOptions> _managementBotOptions;
+    private readonly IServiceProvider _serviceProvider;
 
-    public WebhookHostedService(IOptions<ManagementBotOptions> managementBotOptions,
-        IOptions<ApplicationOptions> applicationOptions, HttpClient httpClient)
+    public WebhookHostedService(IServiceProvider serviceProvider)
     {
-        _managementBotOptions = managementBotOptions;
-        _applicationOptions = applicationOptions;
-        _httpClient = httpClient;
+        _serviceProvider = serviceProvider;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        await SetWebhook(_managementBotOptions.Value.Token);
+        await using var scope = _serviceProvider.CreateAsyncScope();
+        
+        var telegramBot = scope.ServiceProvider.GetRequiredService<ITelegramBot>();
+        var managementBotOptions = scope.ServiceProvider.GetRequiredService<IOptions<ManagementBotOptions>>();
+        
+        await telegramBot.SetWebhook(managementBotOptions.Value.Token, cancellationToken);
+
+        var tokens = await GetTelegramBotTokens(cancellationToken);
+
+        foreach (var token in tokens)
+        {
+            await telegramBot.SetWebhook(token, cancellationToken);
+        }
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        await DeleteWebhook(_managementBotOptions.Value.Token);
-    }
+        await using var scope = _serviceProvider.CreateAsyncScope();
+        
+        var telegramBot = scope.ServiceProvider.GetRequiredService<ITelegramBot>();
+        var managementBotOptions = scope.ServiceProvider.GetRequiredService<IOptions<ManagementBotOptions>>();
+        
+        await telegramBot.DeleteWebhook(managementBotOptions.Value.Token, cancellationToken);
 
-    private async Task SetWebhook(string token)
-    {
-        var telegramBot = new TelegramBotClient(token, _httpClient);
-        var webhookUrl =
-            $"{_applicationOptions.Value.Host}" +
-            $"{(_applicationOptions.Value.Host.EndsWith("/") ? string.Empty : "/")}" +
-            $"{ControllerName.Telegram}/" +
-            $"{token}";
+        var tokens = await GetTelegramBotTokens(cancellationToken);
 
-        var webhookInfo = await telegramBot.GetWebhookInfoAsync();
-        if (webhookInfo.Url != webhookUrl)
+        foreach (var token in tokens)
         {
-            await telegramBot.SetWebhookAsync(webhookUrl);
+            await telegramBot.DeleteWebhook(token, cancellationToken);
         }
     }
 
-    private async Task DeleteWebhook(string token)
+    private async Task<List<string>> GetTelegramBotTokens(CancellationToken cancellationToken)
     {
-        var telegramBot = new TelegramBotClient(token, _httpClient);
-
-        var webhookInfo = await telegramBot.GetWebhookInfoAsync();
-        if (!string.IsNullOrEmpty(webhookInfo.Url))
-        {
-            await telegramBot.DeleteWebhookAsync();
-        }
+        await using var scope = _serviceProvider.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<CheapChicContext>();
+        
+        return await context.TelegramBots
+            .AsNoTracking()
+            .Where(x => !x.Disabled)
+            .Select(x => x.Token)
+            .ToListAsync(cancellationToken);
     }
 }
