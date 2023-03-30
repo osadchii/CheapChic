@@ -22,6 +22,7 @@ using CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Photo;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Text;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Text.States.AddAd;
 using CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Text.States.MainMenu;
+using CheapChic.Infrastructure.UpdateHandlers.Message.Retailer.Text.States.MyAds;
 using CheapChic.Infrastructure.UpdateHandlers.MyChatMember;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -55,7 +56,7 @@ public static class ServiceRegistry
         services.AddHttpClient<ITelegramBot, TelegramBot>();
 
         services.AddHostedService<WebhookHostedService>();
-        services.AddHostedService<AdPublisher>();
+        services.AddHostedService<AdPublisherHostedService>();
 
         services.AddTransient<ICallbackQueryHandler, CallbackQueryHandler>();
 
@@ -63,7 +64,7 @@ public static class ServiceRegistry
         services.AddTransient<ITextMessageHandler, TextMessageHandler>();
         services.AddTransient<IPhotoMessageHandler, PhotoMessageHandler>();
         services.AddTransient<IDocumentMessageHandler, DocumentMessageHandler>();
-        
+
         services.AddTransient<IManagementTextMessageHandler, ManagementTextHandler>();
         services.AddTransient<IRetailerTextMessageHandler, RetailerTextMessageHandler>();
 
@@ -80,18 +81,37 @@ public static class ServiceRegistry
 
         services.AddTransient<IMyBotsStateActivator, MyBotsStateActivator>();
         services.AddTransient<IMyBotsStateHandler, MyBotsStateHandler>();
+
         services.AddTransient<IMyBotsSettingsStateActivator, MyBotsSettingsStateActivator>();
         services.AddTransient<IMyBotsSettingsStateHandler, MyBotsSettingsStateHandler>();
 
+        services.AddTransient<IMyBotsSettingsCurrencyStateActivator, MyBotsSettingsCurrencyStateActivator>();
+        services.AddTransient<IMyBotsSettingsCurrencyStateHandler, MyBotsSettingsCurrencyStateHandler>();
+
+        services.AddTransient<IMyBotsSettingsPublishDaysStateActivator, MyBotsSettingsPublishDaysStateActivator>();
+        services.AddTransient<IMyBotsSettingsPublishDaysStateHandler, MyBotsSettingsPublishDaysStateHandler>();
+
+        services
+            .AddTransient<IMyBotsSettingsPublishEveryHoursStateActivator,
+                MyBotsSettingsPublishEveryHoursStateActivator>();
+        services
+            .AddTransient<IMyBotsSettingsPublishEveryHoursStateHandler, MyBotsSettingsPublishEveryHoursStateHandler>();
+
         services.AddTransient<IRetailerMainMenuStateActivator, RetailerMainMenuStateActivator>();
         services.AddTransient<IRetailerMainMenuStateHandler, RetailerMainMenuStateHandler>();
-        
+
+        services.AddTransient<IMyAdsStateActivator, MyAdsStateActivator>();
+        services.AddTransient<IMyAdsStateHandler, MyAdsStateHandler>();
+
+        services.AddTransient<IMyAdsSettingsStateActivator, MyAdsSettingsStateActivator>();
+        services.AddTransient<IMyAdsSettingsStateHandler, MyAdsSettingsStateHandler>();
+
         services.AddTransient<IAddAdStateActivator, AddAdStateActivator>();
         services.AddTransient<IAddAdStateHandler, AddAdStateHandler>();
-        
+
         services.AddTransient<IAddAdNameStateActivator, AddAdNameStateActivator>();
         services.AddTransient<IAddAdNameStateHandler, AddAdNameStateHandler>();
-        
+
         services
             .AddTransient<IAddAdDescriptionStateActivator,
                 AddAdDescriptionStateActivator>();

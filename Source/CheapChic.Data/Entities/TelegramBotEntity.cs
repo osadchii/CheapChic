@@ -24,4 +24,15 @@ public class TelegramBotEntity : BaseEntity
     [Required]
     [MaxLength(DatabaseLimit.TelegramBotName)]
     public string Name { get; set; }
+
+    [Required] 
+    [DefaultValue(24)]
+    public int PublishEveryHours { get; set; }
+
+    [Required] 
+    [DefaultValue(28)]
+    public int PublishForDays { get; set; }
+
+    [MaxLength(DatabaseLimit.TelegramBotCurrency)]
+    public string Currency { get; set; }
 }

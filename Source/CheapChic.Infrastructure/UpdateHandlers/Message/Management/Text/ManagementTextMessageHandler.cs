@@ -18,6 +18,9 @@ public class ManagementTextHandler : IManagementTextMessageHandler
     private readonly IAddBotNameStateHandler _addBotNameStateHandler;
     private readonly IMyBotsStateHandler _myBotsStateHandler;
     private readonly IMyBotsSettingsStateHandler _myBotsSettingsStateHandler;
+    private readonly IMyBotsSettingsCurrencyStateHandler _myBotsSettingsCurrencyStateHandler;
+    private readonly IMyBotsSettingsPublishDaysStateHandler _myBotsSettingsPublishDaysStateHandler;
+    private readonly IMyBotsSettingsPublishEveryHoursStateHandler _myBotsSettingsPublishEveryHoursStateHandler;
 
     public ManagementTextHandler(CheapChicContext context, IUserService userService,
         IManagementMainMenuStateActivator managementMainMenuStateActivator,
@@ -25,7 +28,10 @@ public class ManagementTextHandler : IManagementTextMessageHandler
         IAddBotStateHandler addBotStateHandler,
         IAddBotNameStateHandler addBotNameStateHandler,
         IMyBotsStateHandler myBotsStateHandler,
-        IMyBotsSettingsStateHandler myBotsSettingsStateHandler)
+        IMyBotsSettingsStateHandler myBotsSettingsStateHandler,
+        IMyBotsSettingsCurrencyStateHandler myBotsSettingsCurrencyStateHandler,
+        IMyBotsSettingsPublishDaysStateHandler myBotsSettingsPublishDaysStateHandler,
+        IMyBotsSettingsPublishEveryHoursStateHandler myBotsSettingsPublishEveryHoursStateHandler)
     {
         _context = context;
         _userService = userService;
@@ -35,6 +41,9 @@ public class ManagementTextHandler : IManagementTextMessageHandler
         _addBotNameStateHandler = addBotNameStateHandler;
         _myBotsStateHandler = myBotsStateHandler;
         _myBotsSettingsStateHandler = myBotsSettingsStateHandler;
+        _myBotsSettingsCurrencyStateHandler = myBotsSettingsCurrencyStateHandler;
+        _myBotsSettingsPublishDaysStateHandler = myBotsSettingsPublishDaysStateHandler;
+        _myBotsSettingsPublishEveryHoursStateHandler = myBotsSettingsPublishEveryHoursStateHandler;
     }
 
     public async Task HandleMessage(string token, Telegram.Bot.Types.Message message,
@@ -69,6 +78,9 @@ public class ManagementTextHandler : IManagementTextMessageHandler
             State.ManagementAddBotName => _addBotNameStateHandler,
             State.ManagementMyBots => _myBotsStateHandler,
             State.ManagementMyBotsSettings => _myBotsSettingsStateHandler,
+            State.ManagementMyBotsSettingsCurrency => _myBotsSettingsCurrencyStateHandler,
+            State.ManagementMyBotsSettingsPublishDays => _myBotsSettingsPublishDaysStateHandler,
+            State.ManagementMyBotsSettingsPublishEveryHours => _myBotsSettingsPublishEveryHoursStateHandler,
             _ => null
         };
 

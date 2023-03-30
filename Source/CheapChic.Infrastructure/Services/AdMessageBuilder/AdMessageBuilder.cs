@@ -8,47 +8,42 @@ namespace CheapChic.Infrastructure.Services.AdMessageBuilder;
 
 public class AdMessageBuilder : IAdMessageBuilder
 {
-    public SendRequest BuildByState(AddAdStateData stateData, long chatId, string username)
+    public SendRequest BuildByState(AddAdStateData stateData, long chatId, string username, string currency)
     {
-        var price = stateData.Price.HasValue
-            ? stateData.Price.Value.ToString(CultureInfo.InvariantCulture)
-            : "Договорная";
-        var sb = new StringBuilder($"<b>{stateData.Name}</b> от @{username}");
-        sb.AppendLine();
-        sb.AppendLine();
-        sb.AppendLine($"<i>{stateData.Description}</i>");
-        sb.AppendLine();
-        sb.AppendLine($"Цена: <b>{price}</b>");
-        sb.AppendLine($"#{stateData.Action.Replace(" ", "")}");
-
-        SendRequest result;
-        if (stateData.Photos.Count > 0)
-        {
-            result = SendMediaGroupRequest.Create(chatId, sb.ToString(), stateData.Photos.ToArray());
-        }
-        else
-        {
-            result = SendTextMessageRequest.Create(chatId, sb.ToString());
-        }
-
-        return result;
+        return Build(chatId, stateData.Action, stateData.Name, stateData.Description, username, stateData.Price,
+            currency,
+            stateData.Photos.ToArray());
     }
 
-    public SendRequest BuildByEntity(AdEntity ad, List<AdPhotoEntity> photos, long chatId, string username)
+    public SendRequest BuildByEntity(AdEntity ad, List<AdPhotoEntity> photos, long chatId, string username,
+        string currency)
     {
-        var price = ad.Price.HasValue ? ad.Price.Value.ToString(CultureInfo.InvariantCulture) : "Договорная";
-        var sb = new StringBuilder($"<b>{ad.Name}</b> от @{username}");
+        return Build(chatId, ad.Action, ad.Name, ad.Description, username, ad.Price, currency,
+            photos.Select(x => x.PhotoId).ToArray());
+    }
+
+    private static SendRequest Build(long chatId, string action, string name, string description, string username,
+        decimal? price, string currency, Guid[] photos)
+    {
+        const string deductedPrice = "Договорная";
+
+        var priceText = price.HasValue ? 
+            $"Цена: <b>{price.Value.ToString(CultureInfo.InvariantCulture)} {currency}</b>" : 
+            deductedPrice;
+
+        var sb = new StringBuilder($"<b>{name}</b> от @{username}");
         sb.AppendLine();
         sb.AppendLine();
-        sb.AppendLine($"<i>{ad.Description}</i>");
+        sb.AppendLine($"<i>{description}</i>");
         sb.AppendLine();
-        sb.AppendLine($"Цена: <b>{price}</b>");
-        sb.AppendLine($"#{ad.Action.Replace(" ", "")}");
+        sb.AppendLine(priceText);
+        sb.AppendLine();
+        sb.AppendLine($"#{action.Replace(" ", "")}");
 
         SendRequest result;
-        if (photos.Count > 0)
+        if (photos.Length > 0)
         {
-            result = SendMediaGroupRequest.Create(chatId, sb.ToString(), photos.Select(x => x.PhotoId).ToArray());
+            result = SendMediaGroupRequest.Create(chatId, sb.ToString(), photos);
         }
         else
         {

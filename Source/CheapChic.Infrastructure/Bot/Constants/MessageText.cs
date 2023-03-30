@@ -38,6 +38,9 @@ public static class MessageText
         public static class MyBots
         {
             public static string BotWithNameNotFound(string name) => $"Телеграм бот с именем {name} не найден";
+            public const string SendCurrency = "Пришлите название валюты вашего бота (максимум 5 символов)";
+            public const string SendPublishDays = "Пришлите количество дней, через которое объявление будет автоматически деактивировано (не более 28 дней)";
+            public const string SendPublishEveryHours = "Пришлите количество часов, через которое объявление будет отправлено повторно (не менее 1 часа)";
         }
     }
     
@@ -52,6 +55,8 @@ public static class MessageText
         {
             public const string SelectAction = "Выберите действие";
             public const string SendName = "Отправьте краткое название вашего объявления (до 128 символов)";
+            public const string NameIsNotUnique =
+                "У вас уже есть активное объявление с таким названием. Выберите другое название или отключите ваше существующее объявление";
             public const string SendDescription = "Отправьте подробное описание вашего объявления (до 3072 символов)";
             public const string SendPrice = "Отправьте цену";
             public const string SendPhoto = "Пришлите фотографии для вашего объявления (до 4 фотографий) и нажмите \"Готово\"";

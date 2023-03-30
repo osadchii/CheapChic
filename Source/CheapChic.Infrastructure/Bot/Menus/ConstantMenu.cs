@@ -56,13 +56,40 @@ public static class ConstantMenu
                 .AddRow()
                 .AddButton(botSettings.Disabled
                     ? MenuText.Management.MyBotsMenu.Enable
-                    : MenuText.Management.MyBotsMenu.Disable);
+                    : MenuText.Management.MyBotsMenu.Disable)
+                .AddRow()
+                .AddButton(MenuText.Management.MyBotsMenu.Currency)
+                .AddRow()
+                .AddButton(MenuText.Management.MyBotsMenu.PublishDays)
+                .AddRow()
+                .AddButton(MenuText.Management.MyBotsMenu.PublishEvery);
 
             return builder
                 .AddRow()
                 .AddButton(MenuText.Management.Common.Back)
                 .Build();
         }
+
+        public static ReplyKeyboardModel MyBotsSettingsCurrencyMenu =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Management.Common.Back)
+                .Build();
+
+        public static ReplyKeyboardModel MyBotsSettingsPublishDaysMenu =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Management.Common.Back)
+                .Build();
+
+        public static ReplyKeyboardModel MyBotsSettingsPublishEveryHoursMenu =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Management.Common.Back)
+                .Build();
 
         public static ReplyKeyboardModel AddBotMenu =>
             ReplyKeyboardBuilder
@@ -85,9 +112,43 @@ public static class ConstantMenu
             ReplyKeyboardBuilder
                 .Create()
                 .AddRow()
-                .AddButton(MenuText.Retailer.MainMenu.MyAnnouncements)
+                .AddButton(MenuText.Retailer.MainMenu.MyAds)
                 .AddRow()
-                .AddButton(MenuText.Retailer.MainMenu.AddAnnouncement)
+                .AddButton(MenuText.Retailer.MainMenu.AddAd)
+                .Build();
+
+        public static async Task<ReplyKeyboardModel> MyAdsMenu(CheapChicContext context, Guid botId, Guid userId,
+            CancellationToken cancellationToken = default)
+        {
+            var builder = ReplyKeyboardBuilder.Create();
+
+            var adNames = await context.Ads
+                .Where(x => x.BotId == botId)
+                .Where(x => x.UserId == userId)
+                .Where(x => !x.Disable)
+                .Select(x => x.Name)
+                .OrderBy(x => x)
+                .ToListAsync(cancellationToken);
+
+            foreach (var botName in adNames)
+            {
+                builder.AddRow()
+                    .AddButton(botName);
+            }
+
+            builder.AddRow()
+                .AddButton(MenuText.Retailer.Common.Back);
+
+            return builder.Build();
+        }
+
+        public static ReplyKeyboardModel MyAdSettingsMenu =>
+            ReplyKeyboardBuilder
+                .Create()
+                .AddRow()
+                .AddButton(MenuText.Retailer.MyAdsMenu.Disable)
+                .AddRow()
+                .AddButton(MenuText.Retailer.Common.Back)
                 .Build();
 
         public static ReplyKeyboardModel AddAnnouncementMenu =>

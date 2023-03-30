@@ -31,7 +31,7 @@ public class AddAdConfirmationStateActivator : IAddAdConfirmationStateActivator
         CancellationToken cancellationToken = default)
     {
         var state = stateData as AddAdStateData;
-        var adRequest = _adMessageBuilder.BuildByState(state, user.ChatId, user.Username);
+        var adRequest = _adMessageBuilder.BuildByState(state, user.ChatId, user.Username, bot.Currency);
 
         switch (adRequest)
         {

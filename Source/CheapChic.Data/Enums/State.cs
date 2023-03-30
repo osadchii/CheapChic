@@ -9,8 +9,14 @@ public enum State
     
     ManagementMyBots,
     ManagementMyBotsSettings,
+    ManagementMyBotsSettingsCurrency,
+    ManagementMyBotsSettingsPublishDays,
+    ManagementMyBotsSettingsPublishEveryHours,
     
     RetailerMainMenu,
+    
+    RetailerMyAds,
+    RetailerMyAdsSettings,
     
     RetailerAddAdAction,
     RetailerAddAdName,

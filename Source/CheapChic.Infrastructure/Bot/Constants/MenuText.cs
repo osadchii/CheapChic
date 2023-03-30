@@ -19,6 +19,9 @@ public static class MenuText
         {
             public const string Disable = "Отключить";
             public const string Enable = "Включить";
+            public const string Currency = "Установить валюту";
+            public const string PublishDays = "Период активности объявления";
+            public const string PublishEvery = "Частота публикации объявления";
         }
     }
     
@@ -31,8 +34,13 @@ public static class MenuText
         
         public static class MainMenu
         {
-            public const string MyAnnouncements = "Мои объявления";
-            public const string AddAnnouncement = "Добавить объявление";
+            public const string MyAds = "Мои объявления";
+            public const string AddAd = "Добавить объявление";
+        }
+        
+        public static class MyAdsMenu
+        {
+            public const string Disable = "Отключить";
         }
         
         public static class AddAdMenu

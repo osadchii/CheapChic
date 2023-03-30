@@ -9,16 +9,15 @@ using Microsoft.Extensions.Hosting;
 
 namespace CheapChic.Infrastructure.HostedServices;
 
-public class AdPublisher : IHostedService, IAsyncDisposable
+public class AdPublisherHostedService : IHostedService, IAsyncDisposable
 {
     private readonly Task _completedTask = Task.CompletedTask;
     private readonly IServiceProvider _serviceProvider;
     private Timer _timer;
 
-    private const int PublishEveryMinutes = 1440;
-    private const int Delay = 30;
+    private const int Delay = 10;
 
-    public AdPublisher(IServiceProvider serviceProvider)
+    public AdPublisherHostedService(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
@@ -32,7 +31,7 @@ public class AdPublisher : IHostedService, IAsyncDisposable
 
     private void TimerAction(object state)
     {
-        Task.Run(async () => await PublishAds());
+        Task.Run(async () => await PublishAds()).GetAwaiter().GetResult();
     }
 
     private async Task PublishAds()
@@ -42,23 +41,31 @@ public class AdPublisher : IHostedService, IAsyncDisposable
         var telegramBot = scope.ServiceProvider.GetRequiredService<ITelegramBot>();
         var adBuilder = scope.ServiceProvider.GetRequiredService<IAdMessageBuilder>();
 
-        var date = DateTime.UtcNow.AddMinutes(-1 * PublishEveryMinutes);
-        var ads = await context.Ads
-            .Where(x => !x.Disable)
-            .Where(x => x.DateOfLastPublication == null || x.DateOfLastPublication < date)
-            .Include(x => x.Bot)
-            .Include(x => x.User)
+        var telegramBots = await context.TelegramBots
+            .AsNoTracking()
+            .Where(x => !x.Disabled)
+            .Select(x => new { x.Token, x.PublishEveryHours, x.Currency })
             .ToListAsync();
 
-        foreach (var ad in ads)
+        foreach (var telegramBotData in telegramBots)
         {
-            await PublishAd(context, telegramBot, adBuilder, ad);
-            await Task.Delay(TimeSpan.FromSeconds(15));
+            var date = DateTime.UtcNow.AddHours(-1 * telegramBotData.PublishEveryHours);
+            var ad = await context.Ads
+                .Where(x => !x.Disable)
+                .Where(x => x.DateOfLastPublication == null || x.DateOfLastPublication <= date)
+                .Include(x => x.User)
+                .OrderByDescending(x => x.Date)
+                .FirstOrDefaultAsync();
+
+            if (ad is not null)
+            {
+                await PublishAd(context, telegramBot, adBuilder, ad, telegramBotData.Token, telegramBotData.Currency);
+            }
         }
     }
 
     private static async Task PublishAd(CheapChicContext context, ITelegramBot telegramBot, IAdMessageBuilder adBuilder,
-        AdEntity ad)
+        AdEntity ad, string token, string currency)
     {
         var photos = await context.AdPhotos
             .AsNoTracking()
@@ -74,19 +81,19 @@ public class AdPublisher : IHostedService, IAsyncDisposable
 
         foreach (var channelChatId in channels)
         {
-            var request = adBuilder.BuildByEntity(ad, photos, channelChatId, ad.User.Username);
+            var request = adBuilder.BuildByEntity(ad, photos, channelChatId, ad.User.Username, currency);
 
             switch (request)
             {
                 case SendMediaGroupRequest mediaGroupRequest:
-                    await telegramBot.SendPhoto(ad.Bot.Token, mediaGroupRequest);
+                    await telegramBot.SendPhoto(token, mediaGroupRequest);
                     break;
                 case SendTextMessageRequest textRequest:
-                    await telegramBot.SendText(ad.Bot.Token, textRequest);
+                    await telegramBot.SendText(token, textRequest);
                     break;
             }
         }
-        
+
         ad.DateOfLastPublication = DateTime.UtcNow;
         await context.SaveChangesAsync();
     }
