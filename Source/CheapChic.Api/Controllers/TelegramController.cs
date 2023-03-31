@@ -20,4 +20,10 @@ public class TelegramController : ApiController
         await Mediator.Send(command);
         return Ok();
     }
+
+    [HttpGet]
+    public IActionResult HealthCheck()
+    {
+        return Ok("Ok");
+    }
 }
