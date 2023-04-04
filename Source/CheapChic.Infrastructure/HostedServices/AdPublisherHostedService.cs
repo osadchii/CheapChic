@@ -11,20 +11,36 @@ namespace CheapChic.Infrastructure.HostedServices;
 
 public class AdPublisherHostedService : IHostedService, IAsyncDisposable
 {
+    private const int Delay = 10;
     private readonly Task _completedTask = Task.CompletedTask;
     private readonly IServiceProvider _serviceProvider;
     private Timer _timer;
-
-    private const int Delay = 10;
 
     public AdPublisherHostedService(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        if (_timer is IAsyncDisposable timer)
+        {
+            await timer.DisposeAsync();
+        }
+
+        _timer = null;
+    }
+
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _timer = new Timer(TimerAction, null, TimeSpan.Zero, TimeSpan.FromSeconds(Delay));
+
+        return _completedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        _timer?.Change(Timeout.Infinite, 0);
 
         return _completedTask;
     }
@@ -44,7 +60,7 @@ public class AdPublisherHostedService : IHostedService, IAsyncDisposable
         var telegramBots = await context.TelegramBots
             .AsNoTracking()
             .Where(x => !x.Disabled)
-            .Select(x => new { x.Token, x.PublishEveryHours, x.Currency })
+            .Select(x => new { x.Id, x.Token, x.PublishEveryHours, x.Currency })
             .ToListAsync();
 
         foreach (var telegramBotData in telegramBots)
@@ -53,6 +69,7 @@ public class AdPublisherHostedService : IHostedService, IAsyncDisposable
             var ad = await context.Ads
                 .Where(x => !x.Disable)
                 .Where(x => x.DateOfLastPublication == null || x.DateOfLastPublication <= date)
+                .Where(x => x.BotId == telegramBotData.Id)
                 .Include(x => x.User)
                 .OrderByDescending(x => x.Date)
                 .FirstOrDefaultAsync();
@@ -96,22 +113,5 @@ public class AdPublisherHostedService : IHostedService, IAsyncDisposable
 
         ad.DateOfLastPublication = DateTime.UtcNow;
         await context.SaveChangesAsync();
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        _timer?.Change(Timeout.Infinite, 0);
-
-        return _completedTask;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_timer is IAsyncDisposable timer)
-        {
-            await timer.DisposeAsync();
-        }
-
-        _timer = null;
     }
 }
