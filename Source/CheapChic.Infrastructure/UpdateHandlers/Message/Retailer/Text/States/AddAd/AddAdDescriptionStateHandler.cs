@@ -9,7 +9,7 @@ public interface IAddAdDescriptionStateHandler : IRetailerStateHandler
 {
 }
 
-public class AddAddAdDescriptionStateHandler : IAddAdDescriptionStateHandler
+public class AddAdDescriptionStateHandler : IAddAdDescriptionStateHandler
 {
     private const int DescriptionLength = 3072;
 
@@ -20,7 +20,7 @@ public class AddAddAdDescriptionStateHandler : IAddAdDescriptionStateHandler
 
     private readonly IAddAdPriceStateActivator _addAdPriceStateActivator;
 
-    public AddAddAdDescriptionStateHandler(
+    public AddAdDescriptionStateHandler(
         IAddAdDescriptionStateActivator addAdDescriptionStateActivator,
         IAddAdNameStateActivator addAdNameStateActivator,
         IAddAdPriceStateActivator addAdPriceStateActivator)

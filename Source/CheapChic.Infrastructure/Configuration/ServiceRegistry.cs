@@ -117,7 +117,7 @@ public static class ServiceRegistry
         services
             .AddTransient<IAddAdDescriptionStateActivator,
                 AddAdDescriptionStateActivator>();
-        services.AddTransient<IAddAdDescriptionStateHandler, AddAddAdDescriptionStateHandler>();
+        services.AddTransient<IAddAdDescriptionStateHandler, AddAdDescriptionStateHandler>();
 
         services.AddTransient<IAddAdPriceStateActivator, AddAdPriceStateActivator>();
         services.AddTransient<IAddAdPriceStateHandler, AddAdPriceStateHandler>();
