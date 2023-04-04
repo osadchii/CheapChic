@@ -5,6 +5,7 @@ using CheapChic.Infrastructure.Configuration.Models;
 using CheapChic.Infrastructure.Constants;
 using CheapChic.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -19,14 +20,16 @@ public class TelegramBot : ITelegramBot
     private readonly IOptions<ManagementBotOptions> _managementBotOptions;
     private readonly HttpClient _httpClient;
     private readonly CheapChicContext _context;
+    private readonly IMemoryCache _memoryCache;
 
     public TelegramBot(HttpClient httpClient, IOptions<ApplicationOptions> applicationOptions, CheapChicContext context,
-        IOptions<ManagementBotOptions> managementBotOptions)
+        IOptions<ManagementBotOptions> managementBotOptions, IMemoryCache memoryCache)
     {
         _httpClient = httpClient;
         _applicationOptions = applicationOptions;
         _context = context;
         _managementBotOptions = managementBotOptions;
+        _memoryCache = memoryCache;
     }
 
     public async Task SetWebhook(string token, CancellationToken cancellationToken = default)
@@ -247,15 +250,23 @@ public class TelegramBot : ITelegramBot
             return null;
         }
 
-        var botId = await _context.TelegramBots
-            .Where(x => x.Token == token)
-            .Select(x => x.Id)
-            .FirstOrDefaultAsync(cancellationToken);
+        var cacheKey = GetBotCacheKey(token);
 
-        if (botId == Guid.Empty)
+        if (!_memoryCache.TryGetValue(cacheKey, out Guid botId))
         {
-            var exceptionMessage = ExceptionMessage.BotNotFound(token);
-            throw new Exception(exceptionMessage);
+            botId = await _context.TelegramBots
+                .AsNoTracking()
+                .Where(x => x.Token == token)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (botId == Guid.Empty)
+            {
+                var exceptionMessage = ExceptionMessage.BotNotFound;
+                throw new Exception(exceptionMessage);
+            }
+
+            _memoryCache.Set(cacheKey, botId);
         }
 
         return botId;
@@ -263,15 +274,22 @@ public class TelegramBot : ITelegramBot
 
     private async Task<Guid?> GetUserId(long chatId, CancellationToken cancellationToken = default)
     {
-        var userId = await _context.TelegramUsers
-            .AsNoTracking()
-            .Where(x => x.ChatId == chatId)
-            .Select(x => x.Id)
-            .FirstOrDefaultAsync(cancellationToken);
+        var cacheKey = GetUserCacheKey(chatId);
 
-        if (userId == Guid.Empty)
+        if (!_memoryCache.TryGetValue(cacheKey, out Guid userId))
         {
-            return null;
+            userId = await _context.TelegramUsers
+                .AsNoTracking()
+                .Where(x => x.ChatId == chatId)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (userId == Guid.Empty)
+            {
+                return null;
+            }
+
+            _memoryCache.Set(cacheKey, userId);
         }
 
         return userId;
@@ -279,18 +297,40 @@ public class TelegramBot : ITelegramBot
 
     private async Task<Guid?> GetChannelId(long chatId, CancellationToken cancellationToken = default)
     {
-        var userId = await _context.TelegramChannels
-            .AsNoTracking()
-            .Where(x => x.ChatId == chatId)
-            .Select(x => x.Id)
-            .FirstOrDefaultAsync(cancellationToken);
+        var cacheKey = GetChannelCacheKey(chatId);
 
-        if (userId == Guid.Empty)
+        if (!_memoryCache.TryGetValue(cacheKey, out Guid channelId))
         {
-            return null;
+            channelId = await _context.TelegramChannels
+                .AsNoTracking()
+                .Where(x => x.ChatId == chatId)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (channelId == Guid.Empty)
+            {
+                return null;
+            }
+
+            _memoryCache.Set(cacheKey, channelId);
         }
 
-        return userId;
+        return channelId;
+    }
+
+    private static string GetChannelCacheKey(long chatId)
+    {
+        return $"channel_{chatId}";
+    }
+
+    private static string GetUserCacheKey(long chatId)
+    {
+        return $"user_{chatId}";
+    }
+
+    private static string GetBotCacheKey(string token)
+    {
+        return $"bot_{token}";
     }
 
     private TelegramBotClient GetClient(string token) => new(token, _httpClient);

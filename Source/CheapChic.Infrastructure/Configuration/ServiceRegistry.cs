@@ -55,6 +55,8 @@ public static class ServiceRegistry
 
         services.AddHttpClient<ITelegramBot, TelegramBot>();
 
+        services.AddMemoryCache();
+
         services.AddHostedService<WebhookHostedService>();
         services.AddHostedService<AdPublisherHostedService>();
 
