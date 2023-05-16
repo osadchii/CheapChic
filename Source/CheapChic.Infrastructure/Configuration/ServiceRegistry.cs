@@ -59,6 +59,7 @@ public static class ServiceRegistry
 
         services.AddHostedService<WebhookHostedService>();
         services.AddHostedService<AdPublisherHostedService>();
+        services.AddHostedService<AdDisablerHostedService>();
 
         services.AddTransient<ICallbackQueryHandler, CallbackQueryHandler>();
 

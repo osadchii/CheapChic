@@ -90,5 +90,10 @@ public static class MessageText
             public static string CantAddMoreThanPhotos(int count) =>
                 $"Невозможно добавить больше {count} фото к объявлению";
         }
+        
+        public static class Ad
+        {
+            public static string AdHasBeenDisabled(string name) => $"Объявление <b>{name}</b> было деактивировано. Если оно еще актуально, добавьте его снова";
+        }
     }
 }
